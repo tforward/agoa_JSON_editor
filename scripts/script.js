@@ -65,7 +65,6 @@ function traverse_data(obj, func, fieldnames, digitSep) {
             traverse_data(obj[key], func, fieldnames, digitSep);
         }
     }
-	
 	return fieldnames, digitSep
 }
 
