@@ -47,6 +47,10 @@ function other(){
 	// super list
 	// (key === "visible")
 	// (key === "label") format to make this look nice remove _ etc. Title Case
+	
+	// global digitSep 
+	// default values for visibility OFF
+	// label rules TitleCase, UpperCase, CamalCase, remove() or user_input
     
 	//console.log(key + " : " + value);
 }
