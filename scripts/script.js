@@ -19,41 +19,50 @@ function boolean_switch(key, value, field, look, set){
 
 
 //called with every property and its value
-function process(key, value, fieldnames) {
+function process_data(key, value, fieldnames, digitSep) {
     
 	if (key === "fieldName"){
+		fieldname = value;
 		// Add all unique fieldnames
-		fieldnames.add(value);
-		console.log(value);
+		fieldnames.add(fieldname);
 	}
 	
+	else if (key === "digitSeparator"){
+		digitSep.add(fieldname);
+	}
+	
+    return key, value, fieldnames
+}
+
+function other(){
+		
 	// It makes sence on the first pass to pick up the other features?
 	key, value = boolean_switch(key, value, "digitSeparator", look=true, set=false);
+	
+	key, value = boolean_switch(key, value, "visible", look=true, set=false);
 	
 	// visibility
 	// include list 
 	// exclude list
 	// super list
+	// (key === "visible")
+	// (key === "label") format to make this look nice remove _ etc. Title Case
     
 	//console.log(key + " : " + value);
-	
-	
-	
-    return key, value, fieldnames
 }
 
 
-function traverse(obj, func, fieldnames) {
+function traverse_data(obj, func, fieldnames, digitSep) {
 	
     for (var key in obj) {
-        func.apply(this,[key, obj[key], fieldnames]);  
+        func.apply(this,[key, obj[key], fieldnames, digitSep]);  
         if (obj[key] !== null && typeof(obj[key]) == "object") {
             //going one step down in the object tree!!
-            traverse(obj[key], func, fieldnames);
+            traverse_data(obj[key], func, fieldnames, digitSep);
         }
     }
 	
-	return fieldnames
+	return fieldnames, digitSep
 }
 
 
@@ -66,9 +75,11 @@ function main(){
 	json_data = parse_json(data);
 	
 	var layers = json_data.layers;
-	var fieldnames = new Set();
-	result = traverse(layers, process, fieldnames);
-	console.log(result)
+	var fieldnames_list = new Set();
+	var digitSep_list = new Set();
+	
+	fieldnames_list, digitSep_list  = traverse_data(layers, process_data, fieldnames_list, digitSep_list);
+	console.log(digitSep_list)
 	
 	
 }
