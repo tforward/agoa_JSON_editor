@@ -17,23 +17,6 @@ function boolean_switch(key, value, field, look, set){
 }
 
 
-
-//called with every property and its value
-function process_data(key, value, fieldnames, digitSep) {
-    
-	if (key === "fieldName"){
-		fieldname = value;
-		// Add all unique fieldnames
-		fieldnames.add(fieldname);
-	}
-	
-	else if (key === "digitSeparator"){
-		digitSep.add(fieldname);
-	}
-	
-    return key, value, fieldnames
-}
-
 function other(){
 		
 	// It makes sence on the first pass to pick up the other features?
@@ -56,13 +39,29 @@ function other(){
 }
 
 
-function traverse_data(obj, func, fieldnames, digitSep) {
+function traverse_data(obj, fieldnames, digitSep, digit_bool) {
 	
     for (var key in obj) {
-        func.apply(this,[key, obj[key], fieldnames, digitSep]);  
-        if (obj[key] !== null && typeof(obj[key]) == "object") {
-            //going one step down in the object tree!!
-            traverse_data(obj[key], func, fieldnames, digitSep);
+        var title = (obj[key]["popupInfo"]["title"]);
+        var fields = obj[key]["popupInfo"]["fieldInfos"];
+        
+        for (var i in fields){
+             console.log(fields[i]["fieldName"]);
+             fieldnames.add(fields[i]["fieldName"]);
+             
+             if (fields[i]["format"]){
+                 
+                if (fields[i]["format"]["digitSeparator"] === digit_bool){
+                    digitSep.add(fields[i]["fieldName"]);
+                }
+                 
+                 
+                // // Check if the field has the "digitSeparator" property
+                // if (fields[i]["format"].hasOwnProperty("digitSeparator")){
+                    // digitSep.add(fields[i]["fieldName"]);
+                // }
+                 
+             }
         }
     }
 	return fieldnames, digitSep
@@ -97,12 +96,12 @@ function main(){
 	var layers = json_data.layers;
 	var fieldnames_list = new Set();
 	var digitSep_list = new Set();
+    
+    var digit_bool = false;
+
+	fieldnames_list, digitSep_list  = traverse_data(layers, fieldnames_list, digitSep_list, digit_bool);
 	
-	fieldnames_list, digitSep_list  = traverse_data(layers, process_data, fieldnames_list, digitSep_list);
-	
-	add_elem_to("all_fields", fieldnames_list);
-	//console.log(digitSep_list)
-	
+	add_elem_to("all_fields", digitSep_list);
 	
 }
 
