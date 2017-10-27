@@ -70,6 +70,23 @@ function traverse_data(obj, func, fieldnames, digitSep) {
 
 
 
+function add_elem_to(elem_id, item_list){
+	var add_to = document.getElementById(elem_id);
+	
+	// no sort, reverse_sort, sort
+	// hide visable = false
+	array = Array.from(item_list).sort()
+		
+	var count = 0;
+	array.forEach(function(entry) {
+		var add_elem = document.createElement("div");
+		add_elem.className = "aligner-item";
+		add_elem.id = count;
+		var add_content = add_elem.innerHTML = entry ;
+		add_to.appendChild(add_elem);
+		count ++
+	});
+}
 
 
 function main(){
@@ -82,7 +99,9 @@ function main(){
 	var digitSep_list = new Set();
 	
 	fieldnames_list, digitSep_list  = traverse_data(layers, process_data, fieldnames_list, digitSep_list);
-	console.log(digitSep_list)
+	
+	add_elem_to("all_fields", fieldnames_list);
+	//console.log(digitSep_list)
 	
 	
 }
