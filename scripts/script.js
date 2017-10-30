@@ -6,17 +6,6 @@ function parse_json(data){
 }
 
 
-
-function boolean_switch(key, value, field, look, set){
-	if (key === "digitSeparator"){
-		if (value = look){
-			value = set
-		}
-    }
-	return key, value
-}
-
-
 function other(){
 		
 	// It makes sence on the first pass to pick up the other features?
@@ -39,32 +28,51 @@ function other(){
 }
 
 
-function traverse_data(obj, fieldnames, digitSep, digit_bool) {
+function traverse_data(obj, fieldnames) {
+    var visable_true = new Set();
+    var visable_false = new Set();
+    
+    var digitSep_true = new Set();
+    var digitSep_false = new Set();
+
+    // For places at the moment only just get the fieldnames
+    var digit_places = new Set();
+    var date_format = new Set();
+    
 	
     for (var key in obj) {
-        var title = (obj[key]["popupInfo"]["title"]);
+        var title = obj[key]["popupInfo"]["title"];
         var fields = obj[key]["popupInfo"]["fieldInfos"];
         
         for (var i in fields){
-             console.log(fields[i]["fieldName"]);
+             //console.log(fields[i]["fieldName"]);
              fieldnames.add(fields[i]["fieldName"]);
              
+             if (fields[i]["visible"] === true){
+                 visable_true.add(fields[i]["fieldName"]);
+             }
+             else if (fields[i]["visible"] === false){
+                visable_false.add(fields[i]["fieldName"]);
+            }
+             
              if (fields[i]["format"]){
-                 
-                if (fields[i]["format"]["digitSeparator"] === digit_bool){
-                    digitSep.add(fields[i]["fieldName"]);
+                if (fields[i]["format"]["digitSeparator"] === true){
+                    digitSep_true.add(fields[i]["fieldName"]);
+                    digit_places.add(fields[i]["fieldName"]);
                 }
-                 
-                 
-                // // Check if the field has the "digitSeparator" property
-                // if (fields[i]["format"].hasOwnProperty("digitSeparator")){
-                    // digitSep.add(fields[i]["fieldName"]);
-                // }
-                 
+                else if (fields[i]["format"]["digitSeparator"] === false){
+                    digitSep_false.add(fields[i]["fieldName"]);
+                    digit_places.add(fields[i]["fieldName"]);
+                }
+                 else if (fields[i]["format"].hasOwnProperty(["dateFormat"])){
+                    date_format.add(fields[i]["fieldName"]);
+                }
              }
         }
+        var list_of_sets = [visable_true, visable_false, digitSep_true, digitSep_false, digit_places, date_format]
+        console.log(list_of_sets)
     }
-	return fieldnames, digitSep
+	return fieldnames, list_of_sets
 }
 
 
@@ -95,11 +103,8 @@ function main(){
 	
 	var layers = json_data.layers;
 	var fieldnames_list = new Set();
-	var digitSep_list = new Set();
     
-    var digit_bool = false;
-
-	fieldnames_list, digitSep_list  = traverse_data(layers, fieldnames_list, digitSep_list, digit_bool);
+	fieldnames_list, digitSep_list  = traverse_data(layers, fieldnames_list);
 	
 	add_elem_to("all_fields", digitSep_list);
 	
