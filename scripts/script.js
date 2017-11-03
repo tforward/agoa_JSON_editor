@@ -94,7 +94,9 @@ function add_elem_to(elem_id, item_list){
 	
 	// no sort, reverse_sort, sort
 	// hide visable = false
-	array = Array.from(item_list).sort()
+	//array = Array.from(item_list).sort()
+    
+    array = item_list
 		
 	var count = 0;
 	array.forEach(function(entry) {
@@ -107,7 +109,15 @@ function add_elem_to(elem_id, item_list){
 	});
 }
 
-
+function fields_lists(field_objects, prop){
+    var fList = [];
+    
+    for (field in field_objects){
+        fList.push((field_objects[field][prop]));
+        
+    }
+    add_elem_to("content", fList);
+}
 
 
 function main(){
@@ -118,10 +128,11 @@ function main(){
 	var data_layers = json_data.layers;
 
 	field_objects  = traverse_data(data_layers);
+
+    fields_lists(field_objects, "name")
     
-    console.log(field_objects);
 	
-	add_elem_to("all_fields", field_objects[1]);
+	
 	
 }
 
