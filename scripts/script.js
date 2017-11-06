@@ -109,14 +109,24 @@ function add_elem_to(elem_id, item_list){
 	});
 }
 
+function prop_checker(field_objects, prop, value){
+    var fList = [];
+    
+    // Add in option to pick a value as well, if none is given return all
+    for (field in field_objects){
+        console.log(field_objects[field][prop] === value);
+    }
+
+}
+
 function fields_lists(field_objects, prop){
     var fList = [];
     
+    // Add in option to pick a value as well, if none is given return all
     for (field in field_objects){
         fList.push((field_objects[field][prop]));
-        
     }
-    add_elem_to("content", fList);
+    return fList
 }
 
 
@@ -129,10 +139,13 @@ function main(){
 
 	field_objects  = traverse_data(data_layers);
 
-    fields_lists(field_objects, "name")
+    field_names = fields_lists(field_objects, "name")
     
+    add_elem_to("content", field_names.sort());
+    
+	console.log(field_objects)
 	
-	
+    prop_checker(field_objects, 'visible', false);
 	
 }
 
