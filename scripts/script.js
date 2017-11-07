@@ -1,4 +1,5 @@
 
+var myApp = {};
 
 function parse_json(data){
 	var text_data = document.getElementById(data).value
@@ -87,46 +88,67 @@ function traverse_data(obj) {
 	return field_objects
 }
 
-
-
-function add_elem_to(elem_id, item_list){
+function add_elem_to(field_objects, elem_id, prop, value){
 	var add_to = document.getElementById(elem_id);
+    
+    // Add in option to pick a value as well, if none is given return all
+    for (field in field_objects){
+
+        entry = field_objects[field][prop];
+	
+        var add_elem = document.createElement("div");
+        
+        if (field_objects[field]["visible"] === value){
+            add_elem.className = "aligner-item";
+        }
+        else{
+            add_elem.className = "aligner-item";
+        }
+        
+        add_elem.id = field;
+        var add_content = add_elem.innerHTML = entry ;
+        add_to.appendChild(add_elem);
+
+    }
+
 	
 	// no sort, reverse_sort, sort
 	// hide visable = false
 	//array = Array.from(item_list).sort()
-    
-    array = item_list
 		
-	var count = 0;
-	array.forEach(function(entry) {
-		var add_elem = document.createElement("div");
-		add_elem.className = "aligner-item";
-		add_elem.id = count;
-		var add_content = add_elem.innerHTML = entry ;
-		add_to.appendChild(add_elem);
-		count ++
-	});
-}
-
-function prop_checker(field_objects, prop, value){
-    var fList = [];
-    
-    // Add in option to pick a value as well, if none is given return all
-    for (field in field_objects){
-        console.log(field_objects[field][prop] === value);
-    }
+	
 
 }
 
-function fields_lists(field_objects, prop){
-    var fList = [];
+function test(){
+     for (field in myApp.field_objects){
+        var elem_id = document.getElementById(field);
+        if (myApp.field_objects[field]["visible"] === true){
+            elem_id.className = "aligner-item";
+        }
+        else{
+            elem_id.className = "aligner-item hidden";
+        }
+     }
+}
+
+
+
+function btn_action(){
+    console.log("hiiiiiii");
+    test()
+
+}
+
+
+
+function btn_toggle(elem_id){
+    var toggle = document.getElementById(elem_id);
     
-    // Add in option to pick a value as well, if none is given return all
-    for (field in field_objects){
-        fList.push((field_objects[field][prop]));
-    }
-    return fList
+    toggle.dataset.toggle = 1
+    
+    console.log(toggle.dataset.toggle)
+    toggle.addEventListener("click", btn_action.bind(), false);
 }
 
 
@@ -137,15 +159,13 @@ function main(){
 	
 	var data_layers = json_data.layers;
 
-	field_objects  = traverse_data(data_layers);
-
-    field_names = fields_lists(field_objects, "name")
+	myApp.field_objects  = traverse_data(data_layers);
     
-    add_elem_to("content", field_names.sort());
+    add_elem_to(myApp.field_objects, "content", "name", true)
     
-	console.log(field_objects)
-	
-    prop_checker(field_objects, 'visible', false);
+    btn_toggle("hidden");
+    
+	console.log(myApp.field_objects);
 	
 }
 
