@@ -134,7 +134,11 @@ function test(){
 
 
 
-function btn_action(){
+function btn_action(btn){
+    console.log(btn.dataset.toggle)
+    //https://toddmotto.com/stop-toggling-classes-with-js-use-behaviour-driven-dom-manipulation-with-data-states/
+    btn.dataset.toggle ^= 0
+    
     console.log("hiiiiiii");
     test()
 
@@ -143,12 +147,12 @@ function btn_action(){
 
 
 function btn_toggle(elem_id){
-    var toggle = document.getElementById(elem_id);
+    var btn = document.getElementById(elem_id);
     
-    toggle.dataset.toggle = 1
+    btn.dataset.toggle = 1
     
-    console.log(toggle.dataset.toggle)
-    toggle.addEventListener("click", btn_action.bind(), false);
+    console.log(btn.dataset.toggle)
+    btn.addEventListener("click", btn_action.bind(null, btn), false);
 }
 
 
