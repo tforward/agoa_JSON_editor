@@ -1,7 +1,9 @@
 
 var myApp = {};
 
-myApp.actions = {hidden: set_hidden, 0: unhidden};
+myApp.actions = {active: undefined, "hidden": set_hidden};
+
+myApp.item_actions = {"hidden": unhidden};
 
 function parse_json(data){
 	var text_data = document.getElementById(data).value
@@ -135,21 +137,59 @@ function unhidden(id){
 	var elem_id = document.getElementById(id);
 	// Instead of calling a particular class, rather determine what button is active in the header
 	// then deal accordingly
-	elem_id.className = "aligner-btn hidden";
+    
+    field = myApp.field_objects[id]
+    
+    if (field["visible"] === true){
+            elem_id.className = "aligner-btn hidden";
+            field["visible"] = false;
+        }
+        else{
+            elem_id.className = "aligner-btn";
+            field["visible"] = true;
+        }
 }
 
 
-function btn_action(btn){
+function btn_action_header(btn){
     btn.dataset.toggle ^= 1
     console.log(btn.id);
+    
+    // Sets the currently active button, which is used to determine what function to run.
+    myApp.actions.active = btn.id;
 	
 	// Get the function for the button based on the ID
-	action = myApp.actions[btn.id]
+	action = myApp.actions[btn.id];
 	
-	// action calls the function assigned to the btn
-	action(btn.id)
+	// Action calls the function assigned to the btn
+	action();
 }
 
+function btn_action(btn){
+    btn.dataset.toggle ^= 1;
+    console.log(btn.id);
+
+	// Gets the active btn header
+	active = myApp.actions.active;
+    
+    if (active == undefined){
+        alert("Please select an option first");
+    }
+    else{
+        console.log(active);
+
+        // Action calls the function assigned to the btn_neader
+        action = myApp.item_actions[active];
+        action(btn.id);
+    }
+}
+
+function btn_toggle_header(elem_id, only_once=false){
+    var btn = document.getElementById(elem_id);
+    
+    btn.dataset.toggle = 0
+    btn.addEventListener("click", btn_action_header.bind(null, btn), only_once);
+}
 
 
 function btn_toggle(elem_id, only_once=false){
@@ -158,7 +198,6 @@ function btn_toggle(elem_id, only_once=false){
     btn.dataset.toggle = 0
     btn.addEventListener("click", btn_action.bind(null, btn), only_once);
 }
-
 
 function main(){
     ///https://stackoverflow.com/questions/7306669/how-to-get-all-properties-values-of-a-javascript-object-without-knowing-the-key/16643074#16643074
@@ -171,9 +210,7 @@ function main(){
     
     add_elem_to(myApp.field_objects, "content", "name", true)
     
-    btn_toggle("hidden");
-    
-	console.log(myApp.field_objects);
+    btn_toggle_header("hidden");
 	
 }
 
