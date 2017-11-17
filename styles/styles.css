@@ -13,12 +13,20 @@
   flex-wrap: wrap;
 }
 
-.aligner-item { 
+.aligner-btn { 
   flex: 1 1 23%;
   margin: 0.2em; 
   background-color: white;
   padding: 0.1em 0.5em 0.1em 0.5em;
 } 
+
+.aligner-btn:hover { 
+  background-color: yellow;
+}
+
+.aligner-btn:active { 
+  background-color: lightblue;
+}
 
 
 .hidden{

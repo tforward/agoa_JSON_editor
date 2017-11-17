@@ -1,6 +1,8 @@
 
 var myApp = {};
 
+myApp.actions = {hidden: set_hidden, 0: unhidden};
+
 function parse_json(data){
 	var text_data = document.getElementById(data).value
 	return JSON.parse(text_data)
@@ -10,11 +12,6 @@ function parse_json(data){
 function other(){
     
     // This tool assumes all fields based on the name
-		
-	// It makes sence on the first pass to pick up the other features?
-	key, value = boolean_switch(key, value, "digitSeparator", look=true, set=false);
-	
-	key, value = boolean_switch(key, value, "visible", look=true, set=false);
 	
 	// visibility
 	// include list 
@@ -92,23 +89,24 @@ function add_elem_to(field_objects, elem_id, prop, value){
 	var add_to = document.getElementById(elem_id);
     
     // Add in option to pick a value as well, if none is given return all
-    for (field in field_objects){
+    for (field_id in field_objects){
 
-        entry = field_objects[field][prop];
+        entry = field_objects[field_id][prop];
 	
-        var add_elem = document.createElement("div");
+        var add_elem = document.createElement("btn");
         
-        if (field_objects[field]["visible"] === value){
-            add_elem.className = "aligner-item";
+        if (field_objects[field_id]["visible"] === value){
+            add_elem.className = "aligner-btn";
         }
         else{
-            add_elem.className = "aligner-item";
+            add_elem.className = "aligner-btn";
         }
         
-        add_elem.id = field;
+        add_elem.id = field_id;
         var add_content = add_elem.innerHTML = entry ;
         add_to.appendChild(add_elem);
-
+		
+		btn_toggle(field_id);
     }
 
 	
@@ -120,39 +118,45 @@ function add_elem_to(field_objects, elem_id, prop, value){
 
 }
 
-function test(){
+function set_hidden(){
      for (field in myApp.field_objects){
         var elem_id = document.getElementById(field);
         if (myApp.field_objects[field]["visible"] === true){
-            elem_id.className = "aligner-item";
+            elem_id.className = "aligner-btn";
         }
         else{
-            elem_id.className = "aligner-item hidden";
+            elem_id.className = "aligner-btn hidden";
         }
      }
 }
 
 
+function unhidden(id){
+	var elem_id = document.getElementById(id);
+	// Instead of calling a particular class, rather determine what button is active in the header
+	// then deal accordingly
+	elem_id.className = "aligner-btn hidden";
+}
+
 
 function btn_action(btn){
-    console.log(btn.dataset.toggle)
-    //https://toddmotto.com/stop-toggling-classes-with-js-use-behaviour-driven-dom-manipulation-with-data-states/
-    btn.dataset.toggle ^= 0
-    
-    console.log("hiiiiiii");
-    test()
-
+    btn.dataset.toggle ^= 1
+    console.log(btn.id);
+	
+	// Get the function for the button based on the ID
+	action = myApp.actions[btn.id]
+	
+	// action calls the function assigned to the btn
+	action(btn.id)
 }
 
 
 
-function btn_toggle(elem_id){
+function btn_toggle(elem_id, only_once=false){
     var btn = document.getElementById(elem_id);
     
-    btn.dataset.toggle = 1
-    
-    console.log(btn.dataset.toggle)
-    btn.addEventListener("click", btn_action.bind(null, btn), false);
+    btn.dataset.toggle = 0
+    btn.addEventListener("click", btn_action.bind(null, btn), only_once);
 }
 
 
