@@ -1,9 +1,9 @@
 
 var myApp = {};
 
-myApp.actions = {active: undefined, "hidden": set_hidden};
+myApp.actions = {active: undefined};
 
-myApp.item_actions = {"hidden": unhidden};
+myApp.item_actions = {"visible": set_hidden};
 
 function parse_json(data){
 	var text_data = document.getElementById(data).value
@@ -39,10 +39,8 @@ function field_prop(name, visible, digit_sep, digits, date_format){
 }
 
 
-
 function traverse_data(obj) {
     var fieldnames = [];
-
     var field_objects = [];
     var fieldname = "";
     var visible = true;
@@ -96,44 +94,52 @@ function add_elem_to(field_objects, elem_id, prop, value){
         entry = field_objects[field_id][prop];
 	
         var add_elem = document.createElement("btn");
-        
-        if (field_objects[field_id]["visible"] === value){
-            add_elem.className = "aligner-btn";
-        }
-        else{
-            add_elem.className = "aligner-btn";
-        }
-        
+		
+		// Assign HTML class and id to element
+		add_elem.className = "aligner-btn";
         add_elem.id = field_id;
+		
         var add_content = add_elem.innerHTML = entry ;
         add_to.appendChild(add_elem);
 		
-		btn_toggle(field_id);
+		btn_toggle(field_id, btn_action);
     }
 
-	
 	// no sort, reverse_sort, sort
 	// hide visable = false
 	//array = Array.from(item_list).sort()
-		
+}
+
+
+function highlight_all(btn, bool){
+
+	// I need to fix this it currentlyy does not work as expected. I need way to monitor the current state if changes turn off the others
+	if (myApp.actions.active == undefined || btn.id ==  myApp.actions.active || btn.id != undefined){
+		btn.dataset.toggle ^= 1;
+	}
 	
-
+	toggle = btn.dataset.toggle;
+	
+	console.log(btn.id)
+	
+	console.log(myApp.actions.active)
+	myApp.actions.active = (toggle == 0) ? btn.id : undefined;
+	
+	for (field in myApp.field_objects){
+		var elem_id = document.getElementById(field);
+		elem_id.className = "aligner-btn";
+		
+		if (toggle == 1){
+			if (myApp.field_objects[field][btn.id] === bool){
+				elem_id.className = "aligner-btn highlight";}
+		}
+	}
+	
 }
 
-function set_hidden(){
-     for (field in myApp.field_objects){
-        var elem_id = document.getElementById(field);
-        if (myApp.field_objects[field]["visible"] === true){
-            elem_id.className = "aligner-btn";
-        }
-        else{
-            elem_id.className = "aligner-btn hidden";
-        }
-     }
-}
 
-
-function unhidden(id){
+function set_hidden(id){
+	
 	var elem_id = document.getElementById(id);
 	// Instead of calling a particular class, rather determine what button is active in the header
 	// then deal accordingly
@@ -141,7 +147,7 @@ function unhidden(id){
     field = myApp.field_objects[id]
     
     if (field["visible"] === true){
-            elem_id.className = "aligner-btn hidden";
+            elem_id.className = "aligner-btn highlight";
             field["visible"] = false;
         }
         else{
@@ -150,67 +156,47 @@ function unhidden(id){
         }
 }
 
-
-function btn_action_header(btn){
-    btn.dataset.toggle ^= 1
-    console.log(btn.id);
-    
-    // Sets the currently active button, which is used to determine what function to run.
-    myApp.actions.active = btn.id;
-	
-	// Get the function for the button based on the ID
-	action = myApp.actions[btn.id];
-	
-	// Action calls the function assigned to the btn
-	action();
-}
-
 function btn_action(btn){
-    btn.dataset.toggle ^= 1;
-    console.log(btn.id);
-
+    
 	// Gets the active btn header
 	active = myApp.actions.active;
     
     if (active == undefined){
-        alert("Please select an option first");
+        alert("Please select an option first.");
     }
     else{
-        console.log(active);
-
         // Action calls the function assigned to the btn_neader
         action = myApp.item_actions[active];
         action(btn.id);
     }
+	
+	btn.dataset.toggle ^= 1;
 }
 
-function btn_toggle_header(elem_id, only_once=false){
+
+function btn_toggle(elem_id, func, bool, btn_type="click"){
     var btn = document.getElementById(elem_id);
     
     btn.dataset.toggle = 0
-    btn.addEventListener("click", btn_action_header.bind(null, btn), only_once);
+    btn.addEventListener(btn_type, func.bind(null, btn, bool));
 }
 
-
-function btn_toggle(elem_id, only_once=false){
-    var btn = document.getElementById(elem_id);
-    
-    btn.dataset.toggle = 0
-    btn.addEventListener("click", btn_action.bind(null, btn), only_once);
-}
 
 function main(){
-    ///https://stackoverflow.com/questions/7306669/how-to-get-all-properties-values-of-a-javascript-object-without-knowing-the-key/16643074#16643074
 	var data = "text_data";
 	json_data = parse_json(data);
 	
 	var data_layers = json_data.layers;
 
-	myApp.field_objects  = traverse_data(data_layers);
+	myApp.field_objects = traverse_data(data_layers);
     
     add_elem_to(myApp.field_objects, "content", "name", true)
     
-    btn_toggle_header("hidden");
+    btn_toggle("visible", highlight_all, false);
+	
+	btn_toggle("digit_sep", highlight_all, true);
+	
+	console.log(myApp.field_objects)
 	
 }
 
