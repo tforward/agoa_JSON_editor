@@ -114,16 +114,37 @@ function add_elem_to(field_objects, elem_id, prop, value){
 function highlight_all(btn, bool){
 
 	// I need to fix this it currentlyy does not work as expected. I need way to monitor the current state if changes turn off the others
-	if (myApp.actions.active == undefined || btn.id ==  myApp.actions.active || btn.id != undefined){
-		btn.dataset.toggle ^= 1;
-	}
+	// if (myApp.actions.active == undefined || btn.id ==  myApp.actions.active || btn.id != undefined){
+		// 
+	// }
 	
-	toggle = btn.dataset.toggle;
+	
+	
+	// if (btn.id != myApp.actions.active || myApp.actions.active == undefined ){
+		// btn.dataset.toggle ^= 1;
+		// myApp.actions.active = btn.id
+	// }
+	// else if (btn.id == myApp.actions.active){
+		// btn.dataset.toggle ^= 0;
+		// myApp.actions.active = undefined
+	
+	// }
+	
+	
+	
+	
+	btn.dataset.toggle ^= 1;
+	
+	
+	toggle= btn.dataset.toggle;
 	
 	console.log(btn.id)
+	console.log(toggle)
+	
 	
 	console.log(myApp.actions.active)
-	myApp.actions.active = (toggle == 0) ? btn.id : undefined;
+	myApp.actions.active = (toggle == 1) ? btn.id : undefined;
+	
 	
 	for (field in myApp.field_objects){
 		var elem_id = document.getElementById(field);
