@@ -175,8 +175,7 @@ function btn_toggle(elem_id, func, bool, btn_type="click"){
 
 
 function highlight_all(btn, bool){
-	state = btn.checked
-
+	state = btn.checked;
 	myApp.actions.active = btn.id;
 
 	for (field in myApp.field_objects){
@@ -215,8 +214,12 @@ function main(){
     radio_toggle("visible", highlight_all, false);
 	
 	radio_toggle("digit_sep", highlight_all, true);
-	
-	console.log(myApp.field_objects)
+    
+    var test = myApp.field_objects = myApp.field_objects
+        .reduce((field_names) => {}, {});
+    
+    
+    console.log()
 	
 }
 
