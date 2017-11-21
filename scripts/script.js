@@ -3,7 +3,7 @@ var myApp = {};
 
 myApp.actions = {active: undefined};
 
-myApp.item_actions = {"visible": set_hidden};
+myApp.item_actions = {"visible" : set_hidden, "digit_sep" : set_digit_sep};
 
 function parse_json(data){
 	var text_data = document.getElementById(data).value
@@ -111,51 +111,22 @@ function add_elem_to(field_objects, elem_id, prop, value){
 }
 
 
-function highlight_all(btn, bool){
-
-	// I need to fix this it currentlyy does not work as expected. I need way to monitor the current state if changes turn off the others
-	// if (myApp.actions.active == undefined || btn.id ==  myApp.actions.active || btn.id != undefined){
-		// 
-	// }
+function set_digit_sep(id){
 	
-	
-	
-	// if (btn.id != myApp.actions.active || myApp.actions.active == undefined ){
-		// btn.dataset.toggle ^= 1;
-		// myApp.actions.active = btn.id
-	// }
-	// else if (btn.id == myApp.actions.active){
-		// btn.dataset.toggle ^= 0;
-		// myApp.actions.active = undefined
-	
-	// }
-	
-	
-	
-	
-	btn.dataset.toggle ^= 1;
-	
-	
-	toggle= btn.dataset.toggle;
-	
-	console.log(btn.id)
-	console.log(toggle)
-	
-	
-	console.log(myApp.actions.active)
-	myApp.actions.active = (toggle == 1) ? btn.id : undefined;
-	
-	
-	for (field in myApp.field_objects){
-		var elem_id = document.getElementById(field);
-		elem_id.className = "aligner-btn";
-		
-		if (toggle == 1){
-			if (myApp.field_objects[field][btn.id] === bool){
-				elem_id.className = "aligner-btn highlight";}
-		}
-	}
-	
+	var elem_id = document.getElementById(id);
+	// Instead of calling a particular class, rather determine what button is active in the header
+	// then deal accordingly
+    
+    field = myApp.field_objects[id]
+    
+    if (field["digit_sep"] === false){
+            elem_id.className = "aligner-btn highlight";
+            field["digit_sep"] = true;
+        }
+        else{
+            elem_id.className = "aligner-btn";
+            field["digit_sep"] = false;
+        }
 }
 
 
@@ -183,7 +154,7 @@ function btn_action(btn){
 	active = myApp.actions.active;
     
     if (active == undefined){
-        alert("Please select an option first.");
+        alert("SELECT AN OPTION FIRST PLEASE");
     }
     else{
         // Action calls the function assigned to the btn_neader
@@ -203,6 +174,34 @@ function btn_toggle(elem_id, func, bool, btn_type="click"){
 }
 
 
+function highlight_all(btn, bool){
+	state = btn.checked
+
+	myApp.actions.active = btn.id;
+
+	for (field in myApp.field_objects){
+		var elem_id = document.getElementById(field);
+		elem_id.className = "aligner-btn";
+		
+		if (state == true){
+			if (myApp.field_objects[field][btn.id] === bool){
+				elem_id.className = "aligner-btn highlight";}
+		}
+	}
+}
+
+
+function radio_toggle(elem_id, func, bool, btn_type="click"){
+	
+	var btn = document.getElementById(elem_id);
+	
+	btn.addEventListener(btn_type, func.bind(null, btn, bool));
+
+}
+
+
+
+
 function main(){
 	var data = "text_data";
 	json_data = parse_json(data);
@@ -213,9 +212,9 @@ function main(){
     
     add_elem_to(myApp.field_objects, "content", "name", true)
     
-    btn_toggle("visible", highlight_all, false);
+    radio_toggle("visible", highlight_all, false);
 	
-	btn_toggle("digit_sep", highlight_all, true);
+	radio_toggle("digit_sep", highlight_all, true);
 	
 	console.log(myApp.field_objects)
 	
