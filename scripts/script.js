@@ -220,34 +220,48 @@ function main(){
 	
 	
 	
-	
+	var field_names_set = new Set();
 	
     var test = json_data.layers
-        .reduce((layers, lyr) => {
+        .reduce((lyrs, lyr) => {
 			// Down 1st level of object
-			//console.log(lyr.popupInfo)
+			//console.log(lyr.popupInfo.title)
 			
-			layers[lyr.popupInfo.title] = []
-			layers[lyr.popupInfo.title].push({
+            
+			lyrs[lyr.popupInfo.title] = []
+			lyrs[lyr.popupInfo.title].push({
 				title: lyr.popupInfo.title,
 			})
 			
-			lyr.popupInfo.fieldInfos
+			var all_fields = lyr.popupInfo.fieldInfos
 			.reduce((fields, field) => {
-				console.log(field.fieldName)
-				layers[lyr.popupInfo.title].push({
-					field_label: field.fieldName
-				})
-			})
+                
+                if (field_names_set.has(field.fieldName) == false){
+                    field_names_set.add(field.fieldName);
+                    //console.log(field.fieldName)
+                    
+                    fields[field.fieldName] = []
+                    fields[field.fieldName].push({
+                        field,
+                    })
+                }
+
+                //console.log(field)
+                return fields
+			}, {});
+			
+            //console.log(Object.keys(all_fields))
+            
+			// lyrs[lyr.popupInfo.title].push({
+					// field_obj: fields
+				// })
 			
 			
-			
-			
-			return layers
+			return lyrs
 		}, {});
     
-    
-    //console.log(test)
+    //console.log(field_names_set);
+    console.log(test)
 	
 }
 
