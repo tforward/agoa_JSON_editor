@@ -214,16 +214,47 @@ function main(){
     radio_toggle("visible", highlight_all, false);
 	
 	radio_toggle("digit_sep", highlight_all, true);
+	
+	//console.log(json_data)
     
-    var test = myApp.field_objects = myApp.field_objects
-        .reduce((field_names) => {}, {});
+	
+	
+	
+	
+	
+    var test = json_data.layers
+        .reduce((layers, lyr) => {
+			// Down 1st level of object
+			//console.log(lyr.popupInfo)
+			
+			layers[lyr.popupInfo.title] = []
+			layers[lyr.popupInfo.title].push({
+				title: lyr.popupInfo.title,
+			})
+			
+			lyr.popupInfo.fieldInfos
+			.reduce((fields, field) => {
+				console.log(field.fieldName)
+				layers[lyr.popupInfo.title].push({
+					field_label: field.fieldName
+				})
+			})
+			
+			
+			
+			
+			return layers
+		}, {});
     
     
-    console.log()
+    //console.log(test)
 	
 }
 
-
+// var field_obj = id.popupInfo.fieldInfos
+			// .reduce(fields, field) => {
+				// console.log(field)
+			// }, {});
 
 
 // ======================================================================
