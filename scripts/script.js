@@ -215,52 +215,31 @@ function main(){
 	
 	radio_toggle("digit_sep", highlight_all, true);
 	
-	//console.log(json_data)
+	//console.log(data_layers)
     
 	
 	
 	
-	var field_names_set = new Set();
+    let field_names_set = new Set();
+    let field_objs = []
 	
-    var test = json_data.layers
+    let test = json_data.layers
         .reduce((lyrs, lyr) => {
-			// Down 1st level of object
-			//console.log(lyr.popupInfo.title)
-			
-            
 			lyrs[lyr.popupInfo.title] = []
-			lyrs[lyr.popupInfo.title].push({
-				title: lyr.popupInfo.title,
-			})
-			
-			var all_fields = lyr.popupInfo.fieldInfos
-			.reduce((fields, field) => {
-                
+            
+            // Gets the field object for each unique field (no dupes)
+            lyr.popupInfo.fieldInfos.forEach(field => {
+                //lyrs[lyr.popupInfo.title].push(field)
                 if (field_names_set.has(field.fieldName) == false){
                     field_names_set.add(field.fieldName);
-                    //console.log(field.fieldName)
-                    
-                    fields[field.fieldName] = []
-                    fields[field.fieldName].push({
-                        field,
-                    })
+                    field_objs.push(field) 
                 }
+            })
 
-                //console.log(field)
-                return fields
-			}, {});
-			
-            //console.log(Object.keys(all_fields))
-            
-			// lyrs[lyr.popupInfo.title].push({
-					// field_obj: fields
-				// })
-			
-			
 			return lyrs
 		}, {});
     
-    //console.log(field_names_set);
+    //console.log(field_objs);
     console.log(test)
 	
 }
