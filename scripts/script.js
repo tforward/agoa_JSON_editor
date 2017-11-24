@@ -219,9 +219,9 @@ function main(){
     
 	
 	
-	
+	// NOTE: see if can return the object instead of define out os scope
     let field_names_set = new Set();
-    let field_objs = []
+    let field_objs = {}
 	
     let test = json_data.layers
         .reduce((lyrs, lyr) => {
@@ -229,10 +229,9 @@ function main(){
             
             // Gets the field object for each unique field (no dupes)
             lyr.popupInfo.fieldInfos.forEach(field => {
-                //lyrs[lyr.popupInfo.title].push(field)
                 if (field_names_set.has(field.fieldName) == false){
                     field_names_set.add(field.fieldName);
-                    field_objs.push(field) 
+                    field_objs[field.fieldName] = (field)
                 }
             })
 
@@ -240,7 +239,7 @@ function main(){
 		}, {});
     
     //console.log(field_objs);
-    console.log(test)
+    console.log(field_objs)
 	
 }
 
