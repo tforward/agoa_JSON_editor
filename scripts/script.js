@@ -39,70 +39,41 @@ function field_prop(name, visible, digit_sep, digits, date_format){
 }
 
 
-function traverse_data(obj) {
-    var fieldnames = [];
-    var field_objects = [];
-    var fieldname = "";
-    var visible = true;
-    var digit_sep = false;
-    var digits = false;
-    var date_format = null;
+function get_unique_field_objs(json_data) {
+    let field_names_set = new Set();
 	
-    for (var key in obj) {
-        var title = obj[key]["popupInfo"]["title"];
-        var fields = obj[key]["popupInfo"]["fieldInfos"];
-        
-        for (var i in fields){
-            // If not already in the fieldnames list
-            if (fieldnames.indexOf(fields[i]["fieldName"]) == -1){
-                fieldnames.push(fields[i]["fieldName"]);
-                fieldname = fields[i]["fieldName"]
-
-                if (fields[i]["visible"] === true){
-                    visible = true;
+    let field_objs = json_data.layers
+        .reduce((field_obj, lyr) => {
+            // Gets a unique field object for each field
+			//     fieldName = object
+            lyr.popupInfo.fieldInfos.forEach(field => {
+                if (field_names_set.has(field.fieldName) == false){
+                    field_names_set.add(field.fieldName);
+                    field_obj[field.fieldName] = (field)
                 }
-                else if (fields[i]["visible"] === false){
-                    visible = false;
-                }
-                if (fields[i]["format"]){
-                    if (fields[i]["format"]["digitSeparator"] === true){
-                        digit_sep = true;
-                        digits = true;
-                    }
-                    else if (fields[i]["format"]["digitSeparator"] === false){
-                        digit_sep = false;
-                        digits = false;
-                    }
-                    else if (fields[i]["format"].hasOwnProperty(["dateFormat"])){
-                        date_format = true;
-                    }
-                }
-                var field_obj = new field_prop(fieldname, visible, digit_sep, digits, date_format)
-                field_objects.push(field_obj);            
-            }
-        }
-    }
-	return field_objects
+            })
+			return field_obj
+		}, {});
+		
+	return field_objs
 }
 
-function add_elem_to(field_objects, elem_id, prop, value){
+function add_elem_to(field_objects, elem_id, value){
 	var add_to = document.getElementById(elem_id);
     
     // Add in option to pick a value as well, if none is given return all
-    for (field_id in field_objects){
+    for (fieldname in field_objects){
 
-        entry = field_objects[field_id][prop];
-	
         var add_elem = document.createElement("btn");
 		
 		// Assign HTML class and id to element
 		add_elem.className = "aligner-btn";
-        add_elem.id = field_id;
+        add_elem.id = fieldname;
 		
-        var add_content = add_elem.innerHTML = entry ;
+        var add_content = add_elem.innerHTML = fieldname;
         add_to.appendChild(add_elem);
 		
-		btn_toggle(field_id, btn_action);
+		btn_toggle(fieldname, btn_action);
     }
 
 	// no sort, reverse_sort, sort
@@ -204,49 +175,21 @@ function radio_toggle(elem_id, func, bool, btn_type="click"){
 function main(){
 	var data = "text_data";
 	json_data = parse_json(data);
-	
-	var data_layers = json_data.layers;
 
-	myApp.field_objects = traverse_data(data_layers);
+	myApp.field_objects = get_unique_field_objs(json_data);
     
-    add_elem_to(myApp.field_objects, "content", "name", true)
+    add_elem_to(myApp.field_objects, "content", true)
     
     radio_toggle("visible", highlight_all, false);
 	
 	radio_toggle("digit_sep", highlight_all, true);
 	
-	//console.log(data_layers)
-    
+    //console.log(field_objs)
 	
-	
-	// NOTE: see if can return the object instead of define out os scope
-    let field_names_set = new Set();
-    let field_objs = {}
-	
-    let test = json_data.layers
-        .reduce((lyrs, lyr) => {
-			lyrs[lyr.popupInfo.title] = []
-            
-            // Gets the field object for each unique field (no dupes)
-            lyr.popupInfo.fieldInfos.forEach(field => {
-                if (field_names_set.has(field.fieldName) == false){
-                    field_names_set.add(field.fieldName);
-                    field_objs[field.fieldName] = (field)
-                }
-            })
-
-			return lyrs
-		}, {});
-    
-    //console.log(field_objs);
-    console.log(field_objs)
+	// working on fixing digital seperator
 	
 }
 
-// var field_obj = id.popupInfo.fieldInfos
-			// .reduce(fields, field) => {
-				// console.log(field)
-			// }, {});
 
 
 // ======================================================================
