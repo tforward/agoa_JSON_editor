@@ -3,7 +3,7 @@ var myApp = {};
 
 myApp.actions = {active: undefined};
 
-myApp.item_actions = {"visible" : set_hidden, "digit_sep" : set_digit_sep};
+myApp.item_actions = {"visible" : set_hidden, "digitSeparator" : set_digit_sep};
 
 function parse_json(data){
 	var text_data = document.getElementById(data).value
@@ -30,21 +30,12 @@ function other(){
 }
 
 
-function field_prop(name, visible, digit_sep, digits, date_format){
-    this.name = name;
-    this.visible = visible;
-    this.digit_sep = digit_sep;
-    this.digits = digits;
-    this.date_format = date_format;
-}
-
-
 function get_unique_field_objs(json_data) {
     let field_names_set = new Set();
 	
     let field_objs = json_data.layers
         .reduce((field_obj, lyr) => {
-            // Gets a unique field object for each field
+            // Gets a unique field object for each field by fieldname
 			//     fieldName = object
             lyr.popupInfo.fieldInfos.forEach(field => {
                 if (field_names_set.has(field.fieldName) == false){
@@ -85,36 +76,39 @@ function add_elem_to(field_objects, elem_id, value){
 function set_digit_sep(id){
 	
 	var elem_id = document.getElementById(id);
-	// Instead of calling a particular class, rather determine what button is active in the header
-	// then deal accordingly
     
-    field = myApp.field_objects[id]
-    
-    if (field["digit_sep"] === false){
-            elem_id.className = "aligner-btn highlight";
-            field["digit_sep"] = true;
+    field = myApp.field_objects[id].format
+
+    if (field !== null){
+        console.log(field["digitSeparator"])
+        console.log(field)
+        if (field["digitSeparator"] === false){
+            elem_id.className = "aligner-btn on";
+            field["digitSeparator"] = true;
         }
         else{
-            elem_id.className = "aligner-btn";
-            field["digit_sep"] = false;
+            elem_id.className = "aligner-btn off";
+            field["digitSeparator"] = false;
         }
+    }
+    else{
+        alert("CANNOT SELECT GREYED OUT FIELDS.");
+    }
 }
 
 
 function set_hidden(id){
 	
 	var elem_id = document.getElementById(id);
-	// Instead of calling a particular class, rather determine what button is active in the header
-	// then deal accordingly
     
     field = myApp.field_objects[id]
     
     if (field["visible"] === true){
-            elem_id.className = "aligner-btn highlight";
+            elem_id.className = "aligner-btn on";
             field["visible"] = false;
         }
         else{
-            elem_id.className = "aligner-btn";
+            elem_id.className = "aligner-btn off";
             field["visible"] = true;
         }
 }
@@ -125,7 +119,7 @@ function btn_action(btn){
 	active = myApp.actions.active;
     
     if (active == undefined){
-        alert("SELECT AN OPTION FIRST PLEASE");
+        alert("PLEASE SELECT AN OPTION FIRST");
     }
     else{
         // Action calls the function assigned to the btn_neader
@@ -145,27 +139,60 @@ function btn_toggle(elem_id, func, bool, btn_type="click"){
 }
 
 
-function highlight_all(btn, bool){
+function highlight_hidden(btn){
 	state = btn.checked;
 	myApp.actions.active = btn.id;
 
 	for (field in myApp.field_objects){
 		var elem_id = document.getElementById(field);
-		elem_id.className = "aligner-btn";
+        
+        // Default / resets
+        elem_id.className = "aligner-btn off";
 		
 		if (state == true){
-			if (myApp.field_objects[field][btn.id] === bool){
-				elem_id.className = "aligner-btn highlight";}
+			if (myApp.field_objects[field][btn.id] === false){
+				elem_id.className = "aligner-btn on";}
 		}
 	}
 }
 
+function highlight_digit_sep(btn){
 
-function radio_toggle(elem_id, func, bool, btn_type="click"){
+    // Sets the active button global
+    myApp.actions.active = btn.id;
+
+	for (id in myApp.field_objects){
+		var elem_id = document.getElementById(id);
+        
+        // Default / resets
+        elem_id.className = "aligner-btn";
+
+		if (btn.checked == true){
+            field = myApp.field_objects[id]
+            
+            if (field.hasOwnProperty("format")){
+                if (field.format !== null){
+                    if (field.format["digitSeparator"] === true){
+                        elem_id.className = "aligner-btn on";}
+                    else{
+                        elem_id.className = "aligner-btn off";}
+                }
+                else{
+                    elem_id.className = "aligner-btn greyed_out"
+                }
+            }
+        }
+    }
+}
+
+
+
+
+function radio_toggle(elem_id, func, btn_type="click"){
 	
 	var btn = document.getElementById(elem_id);
 	
-	btn.addEventListener(btn_type, func.bind(null, btn, bool));
+	btn.addEventListener(btn_type, func.bind(null, btn));
 
 }
 
@@ -180,11 +207,11 @@ function main(){
     
     add_elem_to(myApp.field_objects, "content", true)
     
-    radio_toggle("visible", highlight_all, false);
+    radio_toggle("visible", highlight_hidden);
 	
-	radio_toggle("digit_sep", highlight_all, true);
+	radio_toggle("digitSeparator", highlight_digit_sep);
 	
-    //console.log(field_objs)
+    //console.log(myApp.field_objects['CLOCK_AT_FROM'].format)
 	
 	// working on fixing digital seperator
 	
