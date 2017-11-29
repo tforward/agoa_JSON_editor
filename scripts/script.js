@@ -77,21 +77,16 @@ function set_digit_sep(id){
 	
 	var elem_id = document.getElementById(id);
     
-    field = myApp.field_objects[id].format
+    field = myApp.field_objects[id]
 
-    if (field.hasOwnProperty("digitSeparator")){
-        if (field["digitSeparator"] === false){
-            elem_id.className = "aligner-btn on";
-            field["digitSeparator"] = true;
-        }
-        else{
-            elem_id.className = "aligner-btn off";
-            field["digitSeparator"] = false;
-        }
+    if (field.format !== null && field.format.hasOwnProperty("digitSeparator")){
+        elem_id.className= field.format["digitSeparator"] === false ?  "aligner-btn on" :  "aligner-btn off";
+        field.format["digitSeparator"] = !field.format["digitSeparator"]
     }
     else{
         alert("CANNOT SELECT GREYED OUT FIELDS.");
     }
+        
 }
 
 
