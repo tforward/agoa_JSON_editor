@@ -81,6 +81,7 @@ function set_digit_sep(id){
 
     if (field.format !== null && field.format.hasOwnProperty("digitSeparator")){
         elem_id.className= field.format["digitSeparator"] === false ?  "aligner-btn on" :  "aligner-btn off";
+        // Switches boolean from true or false or vice-versa
         field.format["digitSeparator"] = !field.format["digitSeparator"]
     }
     else{
