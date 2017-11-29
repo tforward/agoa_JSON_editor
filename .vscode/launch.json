@@ -8,8 +8,8 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome against localhost",
-            "url": "file:///H:/GitHub/agoa_JSON_editor/index.html",
-            "webRoot": "${workspaceRoot}"
+            "url": "file:///E:/My%20Documents/My%20Projects/Web%20Projects/agoa_JSON_editor/index.html",
+            "webRoot": "E:\My Documents\My Projects\Web Projects\agoa_JSON_editor"
         }
     ]
 }

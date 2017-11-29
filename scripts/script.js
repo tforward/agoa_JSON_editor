@@ -79,9 +79,7 @@ function set_digit_sep(id){
     
     field = myApp.field_objects[id].format
 
-    if (field !== null){
-        console.log(field["digitSeparator"])
-        console.log(field)
+    if (field.hasOwnProperty("digitSeparator")){
         if (field["digitSeparator"] === false){
             elem_id.className = "aligner-btn on";
             field["digitSeparator"] = true;
@@ -172,10 +170,14 @@ function highlight_digit_sep(btn){
             
             if (field.hasOwnProperty("format")){
                 if (field.format !== null){
-                    if (field.format["digitSeparator"] === true){
-                        elem_id.className = "aligner-btn on";}
+                    if (field.format.hasOwnProperty("digitSeparator")){
+                        if (field.format["digitSeparator"] === true){
+                            elem_id.className = "aligner-btn on";}
+                        else{
+                            elem_id.className = "aligner-btn off";}
+                    }
                     else{
-                        elem_id.className = "aligner-btn off";}
+                        elem_id.className = "aligner-btn greyed_out"}
                 }
                 else{
                     elem_id.className = "aligner-btn greyed_out"
