@@ -23,7 +23,7 @@
 } 
 
 .aligner-btn:hover { 
-	border-style: inset;
+
 }
 
 .aligner-btn:active { 
@@ -37,15 +37,18 @@
 
 .on{
 	background-color: greenyellow;
+	border-style: outset;
 }
 
 .off{
 	background-color: rgb(245, 141, 133);
+	border-style: inset;
 }
 
 
 .greyed_out{
 	opacity: 0.6;
+	border-style: inset;
 }
 
 

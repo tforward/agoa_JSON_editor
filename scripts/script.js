@@ -31,6 +31,7 @@ function other(){
 
 
 function get_unique_field_objs(json_data) {
+
     let field_names_set = new Set();
 	
     let field_objs = json_data.layers
@@ -49,24 +50,26 @@ function get_unique_field_objs(json_data) {
 	return field_objs
 }
 
+
 function add_elem_to(field_objects, elem_id, value){
+
 	var add_to = document.getElementById(elem_id);
     
     // Add in option to pick a value as well, if none is given return all
     for (fieldname in field_objects){
-
-        var add_elem = document.createElement("btn");
-		
-		// Assign HTML class and id to element
-		add_elem.className = "aligner-btn";
-        add_elem.id = fieldname;
-		
-        var add_content = add_elem.innerHTML = fieldname;
-        add_to.appendChild(add_elem);
-		
-		btn_toggle(fieldname, btn_action);
+        if (field_objects.hasOwnProperty(fieldname)){
+            var add_elem = document.createElement("btn");
+            
+            // Assign HTML class and id to element
+            add_elem.className = "aligner-btn";
+            add_elem.id = fieldname;
+            
+            var add_content = add_elem.innerHTML = fieldname;
+            add_to.appendChild(add_elem);
+            
+            btn_toggle(fieldname, btn_action);
+        }
     }
-
 	// no sort, reverse_sort, sort
 	// hide visable = false
 	//array = Array.from(item_list).sort()
@@ -74,43 +77,38 @@ function add_elem_to(field_objects, elem_id, value){
 
 
 function set_digit_sep(id){
-	
+
 	var elem_id = document.getElementById(id);
-    
-    field = myApp.field_objects[id]
+    field = myApp.field_objects[id];
 
     if (field.format !== null && field.format.hasOwnProperty("digitSeparator")){
-        elem_id.className= field.format["digitSeparator"] === false ?  "aligner-btn on" :  "aligner-btn off";
+        elem_id.className = field.format["digitSeparator"] === false ?  "aligner-btn on" :  "aligner-btn off";
+
         // Switches boolean from true or false or vice-versa
-        field.format["digitSeparator"] = !field.format["digitSeparator"]
+        field.format["digitSeparator"] = !field.format["digitSeparator"];
     }
     else{
         alert("CANNOT SELECT GREYED OUT FIELDS.");
     }
-        
 }
 
 
 function set_hidden(id){
-	
+
 	var elem_id = document.getElementById(id);
+    field = myApp.field_objects[id];
+
+    elem_id.className = field["visible"] === true ? "aligner-btn off" : "aligner-btn on";
+
+    field["visible"] = !field["visible"];
     
-    field = myApp.field_objects[id]
-    
-    if (field["visible"] === true){
-            elem_id.className = "aligner-btn on";
-            field["visible"] = false;
-        }
-        else{
-            elem_id.className = "aligner-btn off";
-            field["visible"] = true;
-        }
 }
+
 
 function btn_action(btn){
     
 	// Gets the active btn header
-	active = myApp.actions.active;
+    active = myApp.actions.active;
     
     if (active == undefined){
         alert("PLEASE SELECT AN OPTION FIRST");
@@ -126,6 +124,7 @@ function btn_action(btn){
 
 
 function btn_toggle(elem_id, func, bool, btn_type="click"){
+
     var btn = document.getElementById(elem_id);
     
     btn.dataset.toggle = 0
@@ -134,21 +133,19 @@ function btn_toggle(elem_id, func, bool, btn_type="click"){
 
 
 function highlight_hidden(btn){
-	state = btn.checked;
-	myApp.actions.active = btn.id;
+    // Highlights fields that are visable and hidden
+
+    myApp.actions.active = btn.id;
 
 	for (field in myApp.field_objects){
-		var elem_id = document.getElementById(field);
-        
-        // Default / resets
-        elem_id.className = "aligner-btn off";
-		
-		if (state == true){
-			if (myApp.field_objects[field][btn.id] === false){
-				elem_id.className = "aligner-btn on";}
-		}
+        if (myApp.field_objects.hasOwnProperty(field)){
+            var elem_id = document.getElementById(field);
+
+            elem_id.className = myApp.field_objects[field][btn.id] === true ? "aligner-btn on" : "aligner-btn off";
+        }
 	}
 }
+
 
 function highlight_digit_sep(btn){
 
@@ -161,29 +158,16 @@ function highlight_digit_sep(btn){
         // Default / resets
         elem_id.className = "aligner-btn";
 
-		if (btn.checked == true){
-            field = myApp.field_objects[id]
-            
-            if (field.hasOwnProperty("format")){
-                if (field.format !== null){
-                    if (field.format.hasOwnProperty("digitSeparator")){
-                        if (field.format["digitSeparator"] === true){
-                            elem_id.className = "aligner-btn on";}
-                        else{
-                            elem_id.className = "aligner-btn off";}
-                    }
-                    else{
-                        elem_id.className = "aligner-btn greyed_out"}
-                }
-                else{
-                    elem_id.className = "aligner-btn greyed_out"
-                }
-            }
+        field = myApp.field_objects[id];
+
+        if (field.format !== null && field.format.hasOwnProperty("digitSeparator")){
+            elem_id.className = field.format["digitSeparator"] === false ?  "aligner-btn on" :  "aligner-btn off";
+        }
+        else{
+            elem_id.className = "aligner-btn greyed_out"
         }
     }
 }
-
-
 
 
 function radio_toggle(elem_id, func, btn_type="click"){
@@ -193,8 +177,6 @@ function radio_toggle(elem_id, func, btn_type="click"){
 	btn.addEventListener(btn_type, func.bind(null, btn));
 
 }
-
-
 
 
 function main(){
@@ -214,7 +196,6 @@ function main(){
 	// working on fixing digital seperator
 	
 }
-
 
 
 // ======================================================================
