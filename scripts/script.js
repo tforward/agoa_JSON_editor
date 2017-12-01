@@ -53,7 +53,7 @@ function get_unique_field_objs(json_data) {
 
 function add_elem_to(field_objects, elem_id, value){
 
-	var add_to = document.getElementById(elem_id);
+    var add_to = document.getElementById(elem_id);
     
     // Add in option to pick a value as well, if none is given return all
     for (fieldname in field_objects){
@@ -63,7 +63,7 @@ function add_elem_to(field_objects, elem_id, value){
             // Assign HTML class and id to element
             add_elem.className = "aligner-btn";
             add_elem.id = fieldname;
-            
+
             var add_content = add_elem.innerHTML = fieldname;
             add_to.appendChild(add_elem);
             
@@ -169,8 +169,28 @@ function highlight_digit_sep(btn){
     }
 }
 
+function only_selectable(btn){
+    
+    var elements = document.getElementsByClassName("greyed_out"); 
+    //console.log(elements)
 
-function radio_toggle(elem_id, func, btn_type="click"){
+    //elem = elements.map()
+
+    //console.log(elements)
+
+    console.log(Object.entries(elements))
+
+    // for (key in elements){
+    //     console.log(elements[key].id); //second console output
+    // }
+
+    //console.log(elements)
+
+    //element.className.replace("greyed_out", "hidden")
+}
+
+
+function addEventListener(elem_id, func, btn_type="click"){
 	
 	var btn = document.getElementById(elem_id);
 	
@@ -181,19 +201,21 @@ function radio_toggle(elem_id, func, btn_type="click"){
 
 function main(){
 	var data = "text_data";
-	json_data = parse_json(data);
+    json_data = parse_json(data);
 
 	myApp.field_objects = get_unique_field_objs(json_data);
     
     add_elem_to(myApp.field_objects, "content", true)
     
-    radio_toggle("visible", highlight_hidden);
+    addEventListener("visible", highlight_hidden);
 	
-	radio_toggle("digitSeparator", highlight_digit_sep);
+    addEventListener("digitSeparator", highlight_digit_sep);
+    
+    addEventListener("selectable", only_selectable);
 	
     //console.log(myApp.field_objects['CLOCK_AT_FROM'].format)
 	
-	// working on fixing digital seperator
+    // working on fixing digital seperator
 	
 }
 
