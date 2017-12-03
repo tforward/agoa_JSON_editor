@@ -171,22 +171,25 @@ function highlight_digit_sep(btn){
 
 function only_selectable(btn){
     
-    var elements = document.getElementsByClassName("greyed_out"); 
-    //console.log(elements)
+    // THIS DOES NOT WORK SINCE DOWN BELOW SWITCHES IT TO HIDDEN SO IT CAN"T TRIGGER AGAIN
+    var elems = document.getElementsByClassName("greyed_out"); 
 
-    //elem = elements.map()
+    //btn.checked === false
 
-    //console.log(elements)
+    console.log(btn.checked)
 
-    console.log(Object.entries(elements))
-
-    // for (key in elements){
-    //     console.log(elements[key].id); //second console output
-    // }
-
-    //console.log(elements)
-
-    //element.className.replace("greyed_out", "hidden")
+    for (elem in elems){
+		if (elems.hasOwnProperty(elem)){
+            if (btn.checked === true){
+                console.log("true")
+                elems[elem].className = elems[elem].className.replace("greyed_out", "hidden")
+            }
+            else{
+                console.log("false")
+                elems[elem].className = elems[elem].className.replace("hidden", "greyed_out");
+            }
+		}
+    }
 }
 
 
