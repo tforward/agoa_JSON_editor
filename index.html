@@ -19,8 +19,15 @@
           <label><input type="radio" name="colors" id="digitSeparator">Has Digit Seperator</label>
         </form>
         <form>
-          <label><input type="checkbox" id="selectable" checked> Selectable Only<br></label>
+          <label><input type="checkbox" id="selectable" checked> Hide Greyed-Out<br></label>
         </form>
+        <select id="selection_option">
+          <option value="all_on">Set all On</option>
+          <option value="all_off">Set all Off</option>
+          <option value="invert">Invert Selection</option>
+          <option value="none" selected>None</option>
+        </select>
+        <button type="button" id="selected_option">Apply</button>
     </div>
     <div class="aligner" id="content">
         <!== Content from JS goes here ==!>

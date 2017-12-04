@@ -14,19 +14,25 @@ function parse_json(data){
 function other(){
     
     // This tool assumes all fields based on the name
-	
-	// visibility
-	// include list 
-	// exclude list
-	// super list
-	// (key === "visible")
+
 	// (key === "label") format to make this look nice remove _ etc. Title Case
 	
-	// global digitSep 
-	// default values for visibility OFF
-	// label rules TitleCase, UpperCase, CamalCase, remove() or user_input
+    // label rules TitleCase, UpperCase, CamalCase, remove() or user_input
     
-	//console.log(key + " : " + value);
+    // tooltip
+    
+    // date formats
+
+    // save / load configururation
+
+    // output
+
+    // tooltip for app
+
+    // formatting and make nice
+
+    // error handling
+
 }
 
 
@@ -147,10 +153,12 @@ function highlight_hidden(btn){
 }
 
 
-function highlight_digit_sep(btn){
+function highlight_digit_sep(btn, set_value=false){
 
     // Sets the active button global
     myApp.actions.active = btn.id;
+
+    sel_status = document.getElementById("selectable").checked === true ? "hidden" : "greyed_out";
 
 	for (id in myApp.field_objects){
 		var elem_id = document.getElementById(id);
@@ -161,33 +169,20 @@ function highlight_digit_sep(btn){
         field = myApp.field_objects[id];
 
         if (field.format !== null && field.format.hasOwnProperty("digitSeparator")){
-            elem_id.className = field.format["digitSeparator"] === false ?  "aligner-btn on" :  "aligner-btn off";
+            elem_id.className = field.format["digitSeparator"] === true ?  "aligner-btn on" :  "aligner-btn off";
         }
         else{
-            elem_id.className = "aligner-btn greyed_out"
+            elem_id.className = "aligner-btn " + sel_status;
         }
     }
 }
 
 function only_selectable(btn){
-    
-    // THIS DOES NOT WORK SINCE DOWN BELOW SWITCHES IT TO HIDDEN SO IT CAN"T TRIGGER AGAIN
-    var elems = document.getElementsByClassName("greyed_out"); 
-
-    //btn.checked === false
-
-    console.log(btn.checked)
+    var elems = document.getElementsByClassName("aligner-btn"); 
 
     for (elem in elems){
 		if (elems.hasOwnProperty(elem)){
-            if (btn.checked === true){
-                console.log("true")
-                elems[elem].className = elems[elem].className.replace("greyed_out", "hidden")
-            }
-            else{
-                console.log("false")
-                elems[elem].className = elems[elem].className.replace("hidden", "greyed_out");
-            }
+            elems[elem].className = btn.checked === true ? (elems[elem].className.replace("greyed_out", "hidden")) : (elems[elem].className.replace("hidden", "greyed_out"));
 		}
     }
 }
@@ -199,6 +194,12 @@ function addEventListener(elem_id, func, btn_type="click"){
 	
 	btn.addEventListener(btn_type, func.bind(null, btn));
 
+}
+
+function selected_options(){
+    var btn = document.getElementById("selection_option");
+    console.log(btn.value)
+    return btn.value
 }
 
 
@@ -216,9 +217,9 @@ function main(){
     
     addEventListener("selectable", only_selectable);
 	
-    //console.log(myApp.field_objects['CLOCK_AT_FROM'].format)
-	
-    // working on fixing digital seperator
+    addEventListener("selected_option", selected_options);
+
+    console.log(myApp.field_objects)
 	
 }
 
