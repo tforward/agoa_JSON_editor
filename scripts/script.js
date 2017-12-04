@@ -198,8 +198,19 @@ function addEventListener(elem_id, func, btn_type="click"){
 
 function selected_options(){
     var btn = document.getElementById("selection_option");
-    console.log(btn.value)
-    return btn.value
+    
+    if (btn.value == "all_on"){
+        console.log(btn.value)
+    }
+    else if (btn.value == "all_off"){
+        console.log(btn.value)
+    }
+    else if (btn.value == "all_invert"){
+        console.log(btn.value)
+    }
+    else{
+        console.log(btn.value)
+    }
 }
 
 
@@ -217,9 +228,9 @@ function main(){
     
     addEventListener("selectable", only_selectable);
 	
-    addEventListener("selected_option", selected_options);
+    addEventListener("selection_option", selected_options, "change");
 
-    console.log(myApp.field_objects)
+    //console.log(myApp.field_objects)
 	
 }
 
