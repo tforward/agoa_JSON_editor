@@ -248,14 +248,14 @@ function main(){
 // ======================================================================
 
 // Onload fuction alt. to JQuery ready method. Modern browsers, and IE9+
-let initApplication = function(){
+myApp.initApplication = function(){
   // Handler when the DOM is fully loaded
   console.log("App Loaded.\n");
   main();
 };
 
 document.onreadystatechange = function () {
-    document.readyState === "complete" ? initApplication() : console.log("Loading...");
+    document.readyState === "complete" ? myApp.initApplication() : console.log("Loading...");
 }
 
 // ======================================================================
