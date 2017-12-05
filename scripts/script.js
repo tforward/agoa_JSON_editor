@@ -1,12 +1,12 @@
 
-var myApp = {};
+let myApp = {};
 
 myApp.actions = {active: undefined};
 
 myApp.item_actions = {"visible" : set_hidden, "digitSeparator" : set_digit_sep};
 
 function parse_json(data){
-	var text_data = document.getElementById(data).value
+	let text_data = document.getElementById(data).value
 	return JSON.parse(text_data)
 }
 
@@ -57,34 +57,32 @@ function get_unique_field_objs(json_data) {
 }
 
 
-function add_elem_to(field_objects, elem_id, value){
-
-    var add_to = document.getElementById(elem_id);
+function add_element(fieldname, add_to){
+    let add_elem = document.createElement("btn");
     
-    // Add in option to pick a value as well, if none is given return all
-    for (fieldname in field_objects){
-        if (field_objects.hasOwnProperty(fieldname)){
-            var add_elem = document.createElement("btn");
-            
-            // Assign HTML class and id to element
-            add_elem.className = "aligner-btn";
-            add_elem.id = fieldname;
+    // Assign HTML class and id to element
+    add_elem.className = "aligner-btn";
+    add_elem.id = fieldname;
 
-            var add_content = add_elem.innerHTML = fieldname;
-            add_to.appendChild(add_elem);
-            
-            btn_toggle(fieldname, btn_action);
-        }
-    }
+    let add_content = add_elem.innerHTML = fieldname;
+    add_to.appendChild(add_elem);
+    
+    btn_toggle(fieldname, btn_action);
+}
+
+
+function add_elem_to(elem_id, value){
+
+    let add_to = document.getElementById(elem_id);
+    myApp.field_names.forEach(fieldname => add_element(fieldname, add_to));
+    
 	// no sort, reverse_sort, sort
-	// hide visable = false
-	//array = Array.from(item_list).sort()
 }
 
 
 function set_digit_sep(id){
 
-	var elem_id = document.getElementById(id);
+	let elem_id = document.getElementById(id);
     field = myApp.field_objects[id];
 
     if (field.format !== null && field.format.hasOwnProperty("digitSeparator")){
@@ -101,7 +99,7 @@ function set_digit_sep(id){
 
 function set_hidden(id){
 
-	var elem_id = document.getElementById(id);
+	let elem_id = document.getElementById(id);
     field = myApp.field_objects[id];
 
     elem_id.className = field["visible"] === true ? "aligner-btn off" : "aligner-btn on";
@@ -131,7 +129,7 @@ function btn_action(btn){
 
 function btn_toggle(elem_id, func, bool, btn_type="click"){
 
-    var btn = document.getElementById(elem_id);
+    let btn = document.getElementById(elem_id);
     
     btn.dataset.toggle = 0
     btn.addEventListener(btn_type, func.bind(null, btn, bool));
@@ -143,13 +141,10 @@ function highlight_hidden(btn){
 
     myApp.actions.active = btn.id;
 
-	for (field in myApp.field_objects){
-        if (myApp.field_objects.hasOwnProperty(field)){
-            var elem_id = document.getElementById(field);
-
-            elem_id.className = myApp.field_objects[field][btn.id] === true ? "aligner-btn on" : "aligner-btn off";
-        }
-	}
+    myApp.field_names.forEach(function (field) {
+        let elem_id = document.getElementById(field);
+        elem_id.className = myApp.field_objects[field][btn.id] === true ? "aligner-btn on" : "aligner-btn off";
+    });
 }
 
 
@@ -160,47 +155,63 @@ function highlight_digit_sep(btn, set_value=false){
 
     sel_status = document.getElementById("selectable").checked === true ? "hidden" : "greyed_out";
 
-	for (id in myApp.field_objects){
-		var elem_id = document.getElementById(id);
+    myApp.field_names.forEach(function (field){
+        let elem_id = document.getElementById(field);
         
         // Default / resets
         elem_id.className = "aligner-btn";
-
-        field = myApp.field_objects[id];
-
-        if (field.format !== null && field.format.hasOwnProperty("digitSeparator")){
-            elem_id.className = field.format["digitSeparator"] === true ?  "aligner-btn on" :  "aligner-btn off";
+    
+        id = myApp.field_objects[field];
+    
+        if (id.format !== null && id.format.hasOwnProperty("digitSeparator")){
+            elem_id.className = id.format["digitSeparator"] === true ?  "aligner-btn on" :  "aligner-btn off";
         }
         else{
             elem_id.className = "aligner-btn " + sel_status;
         }
-    }
+    });
 }
 
-function only_selectable(btn){
-    var elems = document.getElementsByClassName("aligner-btn"); 
 
-    for (elem in elems){
-		if (elems.hasOwnProperty(elem)){
-            elems[elem].className = btn.checked === true ? (elems[elem].className.replace("greyed_out", "hidden")) : (elems[elem].className.replace("hidden", "greyed_out"));
-		}
-    }
+function only_selectable(btn){
+    let elems = document.getElementsByClassName("aligner-btn"); 
+
+    myApp.field_names.forEach(function (field){
+        elems[field].className = btn.checked === true ? (elems[field].className.replace("greyed_out", "hidden")) : (elems[field].className.replace("hidden", "greyed_out"));
+    });
 }
 
 
 function addEventListener(elem_id, func, btn_type="click"){
 	
-	var btn = document.getElementById(elem_id);
+	let btn = document.getElementById(elem_id);
 	
 	btn.addEventListener(btn_type, func.bind(null, btn));
 
 }
 
+
+function apply_to_all_active_fields(value){
+
+    if  (myApp.actions.active === "visible" && value === "all_on"){
+
+        myApp.field_names.forEach(function (field){
+            let elem_id = document.getElementById(field);
+            elem_id.className = "aligner-btn on"
+            myApp.field_objects[field]["visible"] = true;
+        });
+    }
+    else if (myApp.actions.active === "digitSeparator"){
+        console.log("hi")
+    }
+}
+
+
 function selected_options(){
-    var btn = document.getElementById("selection_option");
+    let btn = document.getElementById("selection_option");
     
     if (btn.value == "all_on"){
-        console.log(btn.value)
+        apply_to_all_active_fields(btn.value)
     }
     else if (btn.value == "all_off"){
         console.log(btn.value)
@@ -215,12 +226,14 @@ function selected_options(){
 
 
 function main(){
-	var data = "text_data";
+	let data = "text_data";
     json_data = parse_json(data);
 
-	myApp.field_objects = get_unique_field_objs(json_data);
+    myApp.field_objects = get_unique_field_objs(json_data);
+
+    myApp.field_names = Object.keys(myApp.field_objects);
     
-    add_elem_to(myApp.field_objects, "content", true)
+    add_elem_to("content", true)
     
     addEventListener("visible", highlight_hidden);
 	
@@ -230,26 +243,19 @@ function main(){
 	
     addEventListener("selection_option", selected_options, "change");
 
-    //console.log(myApp.field_objects)
-	
 }
-
 
 // ======================================================================
 
 // Onload fuction alt. to JQuery ready method. Modern browsers, and IE9+
-var loaded = function(){
+let initApplication = function(){
   // Handler when the DOM is fully loaded
-  console.log("Page Loaded");
+  console.log("App Loaded.\n");
   main();
 };
 
-if (document.readyState === "complete" ||
-    (document.readyState !== "loading" && !document.documentElement.doScroll)
-) {
-  callback();
-} else {
-  document.addEventListener("DOMContentLoaded", loaded);
+document.onreadystatechange = function () {
+    document.readyState === "complete" ? initApplication() : console.log("Loading...");
 }
 
 // ======================================================================
