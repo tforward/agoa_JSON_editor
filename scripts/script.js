@@ -138,6 +138,7 @@ function btn_toggle(elem_id, func, bool, btn_type="click"){
 
 function highlight_hidden(btn){
     // Highlights fields that are visable and hidden
+    reset_selection()
 
     myApp.actions.active = btn.id;
 
@@ -149,6 +150,8 @@ function highlight_hidden(btn){
 
 
 function highlight_digit_sep(btn, set_value=false){
+
+    reset_selection()
 
     // Sets the active button global
     myApp.actions.active = btn.id;
@@ -189,43 +192,44 @@ function addEventListener(elem_id, func, btn_type="click"){
 
 }
 
+function apply_to_all_active_fields(value){
 
-function apply_ON_to_all_active_fields(value){
-
-    myApp.field_names.forEach(function (field){
-        let elem_id = document.getElementById(field);
-        let fid = myApp.field_objects[field];
-       
-        if  (myApp.actions.active === "visible"){
-            elem_id.className = "aligner-btn on"
-            fid["visible"] = true;
-        }
-        else if (myApp.actions.active === "digitSeparator"){
-            if (fid.format !== null && fid.format.hasOwnProperty("digitSeparator")){
-                elem_id.className = "aligner-btn on"
-                fid.format["digitSeparator"] = true;
-            }
-        }
-    });
-}
-
-function apply_OFF_to_all_active_fields(value){
+    css_value = value === true ? "on" : "off";
     
     myApp.field_names.forEach(function (field){
         let elem_id = document.getElementById(field);
         let fid = myApp.field_objects[field];
         
         if  (myApp.actions.active === "visible"){
-            elem_id.className = "aligner-btn off"
-            fid["visible"] = false;
+            if (value === "invert"){
+                elem_id.className = field["visible"] === true ? "aligner-btn off" : "aligner-btn on";
+                field["visible"] = !field["visible"];
+            }
+            else{
+                elem_id.className = "aligner-btn " + css_value;
+                fid["visible"] = value;
+            }
         }
         else if (myApp.actions.active === "digitSeparator"){
             if (fid.format !== null && fid.format.hasOwnProperty("digitSeparator")){
-                elem_id.className = "aligner-btn off"
-                fid.format["digitSeparator"] = false;
+                if (value === "invert"){
+                    elem_id.className = fid.format["digitSeparator"] === false ?  "aligner-btn on" :  "aligner-btn off";
+                    // Switches boolean from true or false or vice-versa
+                    fid.format["digitSeparator"] = !fid.format["digitSeparator"];
+                }
+                else{
+                    elem_id.className = "aligner-btn " + css_value;
+                    fid.format["digitSeparator"] = value;
+                }
             }
         }
     });
+}
+
+
+function reset_selection(){
+    const btn = document.getElementById("selection_option");
+    btn.value = "none";
 }
 
 
@@ -233,13 +237,13 @@ function selected_options(){
     const btn = document.getElementById("selection_option");
     
     if (btn.value == "all_on"){
-        apply_ON_to_all_active_fields(btn.value)
+        apply_to_all_active_fields(true)
     }
     else if (btn.value == "all_off"){
-        apply_OFF_to_all_active_fields(btn.value)
+        apply_to_all_active_fields(false)
     }
     else if (btn.value == "all_invert"){
-        console.log(btn.value)
+        apply_to_all_active_fields("invert")
     }
     else{
         console.log(btn.value)
@@ -268,7 +272,9 @@ function main(){
 	
     addEventListener("selection_option", selected_options, "change");
 
-    // prob have to go back to using the button for the function above
+    // visible has issues at the moment
+
+
 
 }
 
