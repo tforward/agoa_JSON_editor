@@ -1,9 +1,12 @@
+"use strict";
 
 const myApp = {};
 
 myApp.actions = {active: undefined};
 
 myApp.item_actions = {"visible" : set_hidden, "digitSeparator" : set_digit_sep};
+
+// ======================================================================
 
 function parse_json(data){
 	const text_data = document.getElementById(data).value
@@ -83,7 +86,7 @@ function add_elem_to(elem_id, value){
 function set_digit_sep(id){
 
 	const elem_id = document.getElementById(id);
-    field = myApp.field_objects[id];
+    let field = myApp.field_objects[id];
 
     if (field.format !== null && field.format.hasOwnProperty("digitSeparator")){
         elem_id.className = field.format["digitSeparator"] === false ?  "aligner-btn on" :  "aligner-btn off";
@@ -100,11 +103,13 @@ function set_digit_sep(id){
 function set_hidden(id){
 
 	const elem_id = document.getElementById(id);
-    field = myApp.field_objects[id];
+    let field = myApp.field_objects[id];
 
     elem_id.className = field["visible"] === true ? "aligner-btn off" : "aligner-btn on";
 
     field["visible"] = !field["visible"];
+
+    console.log(field["visible"])
     
 }
 
@@ -112,14 +117,14 @@ function set_hidden(id){
 function btn_action(btn){
     
 	// Gets the active btn header
-    active = myApp.actions.active;
+    let active = myApp.actions.active;
     
     if (active == undefined){
         alert("PLEASE SELECT AN OPTION FIRST");
     }
     else{
         // Action calls the function assigned to the btn_neader
-        action = myApp.item_actions[active];
+        let action = myApp.item_actions[active];
         action(btn.id);
     }
 	
@@ -156,7 +161,7 @@ function highlight_digit_sep(btn, set_value=false){
     // Sets the active button global
     myApp.actions.active = btn.id;
 
-    sel_status = document.getElementById("selectable").checked === true ? "hidden" : "greyed_out";
+    let sel_status = document.getElementById("selectable").checked === true ? "hidden" : "greyed_out";
 
     myApp.field_names.forEach(function (field){
         const elem_id = document.getElementById(field);
@@ -164,7 +169,7 @@ function highlight_digit_sep(btn, set_value=false){
         // Default / resets
         elem_id.className = "aligner-btn";
     
-        id = myApp.field_objects[field];
+        let id = myApp.field_objects[field];
     
         if (id.format !== null && id.format.hasOwnProperty("digitSeparator")){
             elem_id.className = id.format["digitSeparator"] === true ?  "aligner-btn on" :  "aligner-btn off";
@@ -194,7 +199,7 @@ function addEventListener(elem_id, func, btn_type="click"){
 
 function apply_to_all_active_fields(value){
 
-    css_value = value === true ? "on" : "off";
+    let css_value = value === true ? "on" : "off";
     
     myApp.field_names.forEach(function (field){
         let elem_id = document.getElementById(field);
@@ -202,14 +207,15 @@ function apply_to_all_active_fields(value){
         
         if  (myApp.actions.active === "visible"){
             if (value === "invert"){
-                elem_id.className = field["visible"] === true ? "aligner-btn off" : "aligner-btn on";
-                field["visible"] = !field["visible"];
+                elem_id.className = fid["visible"] === false ? "aligner-btn on" : "aligner-btn off";
+                fid["visible"] = !fid["visible"];
             }
             else{
                 elem_id.className = "aligner-btn " + css_value;
                 fid["visible"] = value;
             }
         }
+
         else if (myApp.actions.active === "digitSeparator"){
             if (fid.format !== null && fid.format.hasOwnProperty("digitSeparator")){
                 if (value === "invert"){
@@ -228,41 +234,71 @@ function apply_to_all_active_fields(value){
 
 
 function reset_selection(){
-    const btn = document.getElementById("selection_option");
-    btn.value = "none";
+    document.getElementById("selection_options").value = "none";
 }
 
 
 function selected_options(){
-    const btn = document.getElementById("selection_option");
+    const btn = document.getElementById("selection_options");
     
     if (btn.value == "all_on"){
-        apply_to_all_active_fields(true)
+        apply_to_all_active_fields(true);
     }
     else if (btn.value == "all_off"){
-        apply_to_all_active_fields(false)
+        apply_to_all_active_fields(false);
     }
     else if (btn.value == "all_invert"){
-        apply_to_all_active_fields("invert")
+        apply_to_all_active_fields("invert");
     }
     else{
-        console.log(btn.value)
+        console.log(btn.value);
     }
 }
 
-function test(){
-    console.log("test")
+function toTitleCase(str){
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 
-function main(){
-	const data = "text_data";
-    json_data = parse_json(data);
+function set_all_labels(){
+
+    // generator?
+    myApp.field_names.forEach(function (fieldname){
+        let field_obj = myApp.field_objects.hasOwnProperty(fieldname) ?
+         myApp.field_objects[fieldname] : console.log("ERROR: No field with this name: ", fieldname);
+
+        field_obj.label = toTitleCase(field_obj.label);
+        console.log(field_obj.label)
+
+    })
+}
+
+function label_options(){
+    
+    const selected = document.getElementById("label_options").value;
+    
+    if (selected === "title_case"){
+        console.log(selected);
+        set_all_labels();
+    }
+    else if(selected === "lower_case"){
+        console.log(selected);
+    }
+    else if(selected === "upper_case"){
+        console.log(selected);
+    }
+
+}
+
+// ======================================================================
+
+myApp.main = function main(){
+    let json_data = parse_json("text_data");
 
     myApp.field_objects = get_unique_field_objs(json_data);
 
     myApp.field_names = Object.keys(myApp.field_objects);
     
-    add_elem_to("content", true)
+    add_elem_to("content", true);
     
     addEventListener("visible", highlight_hidden);
 	
@@ -270,25 +306,25 @@ function main(){
     
     addEventListener("selectable", only_selectable);
 	
-    addEventListener("selection_option", selected_options, "change");
+    addEventListener("selection_options", selected_options, "change");
 
-    // visible has issues at the moment
+    addEventListener("label_options", label_options, "change");
 
-
+    //console.log( myApp.field_objects)
 
 }
 
 // ======================================================================
 
-// Onload fuction alt. to JQuery ready method. Modern browsers, and IE9+
+// Onload fuction alt. to JQuery ready method.
 myApp.initApplication = function(){
   console.log("App Loaded.\n");
-  main();
+  myApp.main();
 };
 
   // Handler when the DOM is fully loaded
 document.onreadystatechange = function () {
-    document.readyState === "complete" ? myApp.initApplication() : console.log("Loading...");
+    document.readyState === "complete" ? myApp.initApplication(document.readyState) : console.log("Loading...");
 }
 
 // ======================================================================
