@@ -259,34 +259,26 @@ function toTitleCase(str){
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 
-function set_all_labels(){
+function label_options(){
 
-    // generator?
+    // on option to do only on those selected would be good
+    const selected = document.getElementById("label_options").value;
+    
     myApp.field_names.forEach(function (fieldname){
         let field_obj = myApp.field_objects.hasOwnProperty(fieldname) ?
          myApp.field_objects[fieldname] : console.log("ERROR: No field with this name: ", fieldname);
 
-        field_obj.label = toTitleCase(field_obj.label);
+        if (selected === "title_case"){
+            field_obj.label = toTitleCase(field_obj.label);
+        }
+        else if(selected === "lower_case"){
+            field_obj.label = field_obj.label.toLowerCase();
+        }
+        else if(selected === "upper_case"){
+            field_obj.label = field_obj.label.toUpperCase();
+        }
         console.log(field_obj.label)
-
     })
-}
-
-function label_options(){
-    
-    const selected = document.getElementById("label_options").value;
-    
-    if (selected === "title_case"){
-        console.log(selected);
-        set_all_labels();
-    }
-    else if(selected === "lower_case"){
-        console.log(selected);
-    }
-    else if(selected === "upper_case"){
-        console.log(selected);
-    }
-
 }
 
 // ======================================================================
