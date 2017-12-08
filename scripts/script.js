@@ -259,6 +259,19 @@ function toTitleCase(str){
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 
+
+function map_test(func){
+    myApp.field_names.map(fieldname => func(fieldname));
+}
+
+
+function show_labels(fieldname){
+    let elem_id = document.getElementById(fieldname);
+    let field_obj = myApp.field_objects[fieldname];
+    
+    elem_id.innerHTML = field_obj.label
+}
+
 function label_options(){
 
     // on option to do only on those selected would be good
@@ -302,7 +315,11 @@ myApp.main = function main(){
 
     addEventListener("label_options", label_options, "change");
 
+    addEventListener("labels", show_labels);
+
     //console.log( myApp.field_objects)
+
+    map_test(show_labels)
 
 }
 
