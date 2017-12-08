@@ -108,13 +108,13 @@ function set_hidden(id){
     elem_id.className = field["visible"] === true ? "aligner-btn off" : "aligner-btn on";
 
     field["visible"] = !field["visible"];
-
-    console.log(field["visible"])
     
 }
 
 
 function btn_action(btn){
+
+    // This can be redone to get the value from the html form versus the js object
     
 	// Gets the active btn header
     let active = myApp.actions.active;
@@ -147,9 +147,9 @@ function highlight_hidden(btn){
 
     myApp.actions.active = btn.id;
 
-    myApp.field_names.forEach(function (field) {
-        const elem_id = document.getElementById(field);
-        elem_id.className = myApp.field_objects[field][btn.id] === true ? "aligner-btn on" : "aligner-btn off";
+    myApp.field_names.forEach(function (fieldname) {
+        const elem_id = document.getElementById(fieldname);
+        elem_id.className = myApp.field_objects[fieldname][btn.id] === true ? "aligner-btn on" : "aligner-btn off";
     });
 }
 
@@ -187,14 +187,6 @@ function only_selectable(btn){
     myApp.field_names.forEach(function (field){
         elems[field].className = btn.checked === true ? (elems[field].className.replace("greyed_out", "hidden")) : (elems[field].className.replace("hidden", "greyed_out"));
     });
-}
-
-
-function addEventListener(elem_id, func, btn_type="click"){
-	const btn = document.getElementById(elem_id);
-	
-	btn.addEventListener(btn_type, func.bind(null, btn));
-
 }
 
 function apply_to_all_active_fields(value){
@@ -260,17 +252,15 @@ function toTitleCase(str){
 }
 
 
-function map_test(func){
-    myApp.field_names.map(fieldname => func(fieldname));
+function show_obj_prop(btn, item){
+    // btn = The html element the function is being called from
+    myApp.field_names.forEach(function (fieldname){
+        let elem_id = document.getElementById(fieldname);
+        let field_obj = myApp.field_objects[fieldname];
+        elem_id.innerHTML = field_obj[item];
+    });
 }
 
-
-function show_labels(fieldname){
-    let elem_id = document.getElementById(fieldname);
-    let field_obj = myApp.field_objects[fieldname];
-    
-    elem_id.innerHTML = field_obj.label
-}
 
 function label_options(){
 
@@ -278,8 +268,7 @@ function label_options(){
     const selected = document.getElementById("label_options").value;
     
     myApp.field_names.forEach(function (fieldname){
-        let field_obj = myApp.field_objects.hasOwnProperty(fieldname) ?
-         myApp.field_objects[fieldname] : console.log("ERROR: No field with this name: ", fieldname);
+        let field_obj = myApp.field_objects[fieldname];
 
         if (selected === "title_case"){
             field_obj.label = toTitleCase(field_obj.label);
@@ -290,8 +279,17 @@ function label_options(){
         else if(selected === "upper_case"){
             field_obj.label = field_obj.label.toUpperCase();
         }
-        console.log(field_obj.label)
-    })
+    });
+    // Refresh the labels on screen
+    show_obj_prop("label_options", "label");
+}
+
+
+function addEventListener(elem_id, func, func_args=null, btn_type="click"){
+	const btn = document.getElementById(elem_id);
+	
+	btn.addEventListener(btn_type, func.bind(null, btn, func_args));
+
 }
 
 // ======================================================================
@@ -311,15 +309,15 @@ myApp.main = function main(){
     
     addEventListener("selectable", only_selectable);
 	
-    addEventListener("selection_options", selected_options, "change");
+    addEventListener("selection_options", selected_options, null, "change");
 
-    addEventListener("label_options", label_options, "change");
+    addEventListener("label_options", label_options, null, "change");
 
-    addEventListener("labels", show_labels);
+    addEventListener("show_labels", show_obj_prop, "label");
+
+    addEventListener("show_fields", show_obj_prop, "fieldName");
 
     //console.log( myApp.field_objects)
-
-    map_test(show_labels)
 
 }
 
