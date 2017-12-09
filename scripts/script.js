@@ -100,18 +100,20 @@ function set_digit_sep(id){
 }
 
 function edit_label(id){
-    console.log(id)
+    const elem_id = document.getElementById(id);
+    let field_obj = myApp.field_objects[id];
+    elem_id.innerHTML = "<input type='text' value=" + field_obj.label + "></input>"
 }
 
 
 function set_hidden(id){
 
 	const elem_id = document.getElementById(id);
-    let field = myApp.field_objects[id];
+    let field_obj = myApp.field_objects[id];
 
-    elem_id.className = field["visible"] === true ? "aligner-btn off" : "aligner-btn on";
+    elem_id.className = field_obj["visible"] === true ? "aligner-btn off" : "aligner-btn on";
 
-    field["visible"] = !field["visible"];
+    field_obj["visible"] = !field_obj["visible"];
     
 }
 
@@ -273,7 +275,7 @@ function edit_labels(btn, item){
         let field_obj = myApp.field_objects[fieldname];
         // Reset the CSS Style
         elem_id.className = "aligner-btn";
-        elem_id.innerHTML = field_obj[item];
+        elem_id.innerHTML = field_obj[item]
     });
 }
 
