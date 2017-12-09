@@ -226,12 +226,12 @@ function apply_to_all_active_fields(value){
 
 
 function reset_selection(){
-    document.getElementById("selection_options").value = "none";
+    document.getElementById("selection_dropdown").value = "none";
 }
 
 
-function selected_options(){
-    const btn = document.getElementById("selection_options");
+function selection_dropdown(){
+    const btn = document.getElementById("selection_dropdown");
     
     if (btn.value == "all_on"){
         apply_to_all_active_fields(true);
@@ -261,11 +261,22 @@ function show_obj_prop(btn, item){
     });
 }
 
+function edit_labels(btn, item){
+    // btn = The html element the function is being called from
+    myApp.field_names.forEach(function (fieldname){
+        let elem_id = document.getElementById(fieldname);
+        let field_obj = myApp.field_objects[fieldname];
+        // Reset the CSS Style
+        elem_id.className = "aligner-btn";
+        elem_id.innerHTML = field_obj[item];
+    });
+}
 
-function label_options(){
+
+function label_dropdown(){
 
     // on option to do only on those selected would be good
-    const selected = document.getElementById("label_options").value;
+    const selected = document.getElementById("label_dropdown").value;
     
     myApp.field_names.forEach(function (fieldname){
         let field_obj = myApp.field_objects[fieldname];
@@ -279,6 +290,11 @@ function label_options(){
         else if(selected === "upper_case"){
             field_obj.label = field_obj.label.toUpperCase();
         }
+        // made want to add warning here as this will overright label values
+        else if(selected === "match_fields"){
+            field_obj.label = field_obj.fieldName;
+        }
+        // Add a Preserve Starting State
     });
     // Refresh the labels on screen
     show_obj_prop("label_options", "label");
@@ -309,11 +325,11 @@ myApp.main = function main(){
     
     addEventListener("selectable", only_selectable);
 	
-    addEventListener("selection_options", selected_options, null, "change");
+    addEventListener("selection_dropdown", selection_dropdown, null, "change");
 
-    addEventListener("label_options", label_options, null, "change");
+    addEventListener("label_dropdown", label_dropdown, null, "change");
 
-    addEventListener("show_labels", show_obj_prop, "label");
+    addEventListener("show_labels", edit_labels, "label");
 
     addEventListener("show_fields", show_obj_prop, "fieldName");
 

@@ -10,30 +10,30 @@
 
 <body>
 <div>
-
   <div class="flex-container">
     <div id="header">
-        <p>Feild Names</p>
+        <h2>ArcGIS Online Field Editor</h2>
         <form>
           <label><input type="radio" name="colors" id="visible">Is Visible<br></label>
           <label><input type="radio" name="colors" id="digitSeparator">Has Digit Seperator</label>
+          <label><input type="radio" name="colors" id="show_labels">Edit Labels</label>
         </form>
         <form>
           <label><input type="radio" name="field_value" id="show_fields" checked>Fieldnames</label>
-          <label><input type="radio" name="field_value" id="show_labels">Labels</label>
           <label><input type="checkbox" id="selectable" checked> Hide Greyed-Out<br></label>
         </form>
-        <select id="selection_options">
+        <select id="selection_dropdown">
           <option value="none" selected></option>
           <option value="all_on">Set all On</option>
           <option value="all_off">Set all Off</option>
           <option value="all_invert">Invert Selection</option>
         </select>
-        <select id="label_options">
+        <select id="label_dropdown">
           <option value="none" selected></option>
           <option value="title_case">Title Case</option>
-          <option value="lower_case">lower case</option>
-          <option value="upper_case">UPPER CASE</option>
+          <option value="lower_case">Lower Case</option>
+          <option value="upper_case">Upper Case</option>
+          <option value="match_fields">Match Fieldnames</option>
       </select>
     </div>
     <div class="aligner" id="content">
