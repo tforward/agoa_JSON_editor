@@ -4,7 +4,7 @@ const myApp = {};
 
 myApp.actions = {active: undefined};
 
-myApp.item_actions = {"visible" : set_hidden, "digitSeparator" : set_digit_sep};
+myApp.item_actions = {"visible" : set_hidden, "digitSeparator" : set_digit_sep, "edit_labels" : edit_label};
 
 // ======================================================================
 
@@ -99,6 +99,10 @@ function set_digit_sep(id){
     }
 }
 
+function edit_label(id){
+    console.log(id)
+}
+
 
 function set_hidden(id){
 
@@ -119,14 +123,14 @@ function btn_action(btn){
 	// Gets the active btn header
     let active = myApp.actions.active;
     
-    if (active == undefined){
-        alert("PLEASE SELECT AN OPTION FIRST");
-    }
-    else{
+    // if (active == undefined){
+    //     alert("PLEASE SELECT AN OPTION FIRST");
+    // }
+    // else{
         // Action calls the function assigned to the btn_neader
-        let action = myApp.item_actions[active];
-        action(btn.id);
-    }
+    let action = myApp.item_actions[active];
+    action(btn.id);
+    // }
 	
 	btn.dataset.toggle ^= 1;
 }
@@ -262,7 +266,8 @@ function show_obj_prop(btn, item){
 }
 
 function edit_labels(btn, item){
-    // btn = The html element the function is being called from
+    myApp.actions.active = btn.id;
+    
     myApp.field_names.forEach(function (fieldname){
         let elem_id = document.getElementById(fieldname);
         let field_obj = myApp.field_objects[fieldname];
@@ -329,7 +334,7 @@ myApp.main = function main(){
 
     addEventListener("label_dropdown", label_dropdown, null, "change");
 
-    addEventListener("show_labels", edit_labels, "label");
+    addEventListener("edit_labels", edit_labels, "label");
 
     addEventListener("show_fields", show_obj_prop, "fieldName");
 
