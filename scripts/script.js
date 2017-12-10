@@ -102,7 +102,7 @@ function set_digit_sep(id){
 function edit_label(id){
     const elem_id = document.getElementById(id);
     let field_obj = myApp.field_objects[id];
-    elem_id.innerHTML = "<input type='text' value=" + field_obj.label + "></input>"
+    elem_id.innerHTML = "<input type='text' autofocus='autofocus' value=" + field_obj.label + "></input>"
 }
 
 
@@ -238,19 +238,20 @@ function reset_selection(){
 
 function selection_dropdown(){
     const btn = document.getElementById("selection_dropdown");
-    
-    if (btn.value == "all_on"){
-        apply_to_all_active_fields(true);
-    }
-    else if (btn.value == "all_off"){
-        apply_to_all_active_fields(false);
-    }
-    else if (btn.value == "all_invert"){
-        apply_to_all_active_fields("invert");
-    }
-    else{
-        console.log(btn.value);
-    }
+
+    switch(btn.value){
+        case "all_on":
+            apply_to_all_active_fields(true);
+            break;
+        case "all_off":
+            apply_to_all_active_fields(false);
+            break;
+        case "all_invert":
+            apply_to_all_active_fields("invert");
+            break;
+        default:
+            console.log(btn.value);
+    };
 }
 
 function toTitleCase(str){
@@ -288,18 +289,21 @@ function label_dropdown(){
     myApp.field_names.forEach(function (fieldname){
         let field_obj = myApp.field_objects[fieldname];
 
-        if (selected === "title_case"){
-            field_obj.label = toTitleCase(field_obj.label);
-        }
-        else if(selected === "lower_case"){
-            field_obj.label = field_obj.label.toLowerCase();
-        }
-        else if(selected === "upper_case"){
-            field_obj.label = field_obj.label.toUpperCase();
-        }
-        // made want to add warning here as this will overright label values
-        else if(selected === "match_fields"){
-            field_obj.label = field_obj.fieldName;
+        switch (selected){
+            case "title_case":
+                field_obj.label = toTitleCase(field_obj.label);
+                break;
+            case "lower_case":
+                field_obj.label = field_obj.label.toLowerCase();
+                break;
+            case "upper_case":
+                field_obj.label = field_obj.label.toUpperCase();
+                break;
+            case "match_fields":
+                field_obj.label = field_obj.fieldName;
+                break;
+            default:
+                console.log("No case selected");
         }
         // Add a Preserve Starting State
     });
@@ -310,9 +314,7 @@ function label_dropdown(){
 
 function addEventListener(elem_id, func, func_args=null, btn_type="click"){
 	const btn = document.getElementById(elem_id);
-	
 	btn.addEventListener(btn_type, func.bind(null, btn, func_args));
-
 }
 
 // ======================================================================
