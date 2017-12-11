@@ -4,7 +4,7 @@ const myApp = {};
 
 myApp.actions = {active: undefined};
 
-myApp.item_actions = {"visible" : set_hidden, "digitSeparator" : set_digit_sep, "edit_labels" : edit_label};
+myApp.item_actions = {"visible" : set_hidden, "digitSeparator" : set_digit_sep, "show_labels" : edit_label};
 
 // ======================================================================
 
@@ -61,7 +61,7 @@ function get_unique_field_objs(json_data) {
 
 
 function add_element(fieldname, add_to){
-    const add_elem = document.createElement("btn");
+    const add_elem = document.createElement("div");
     
     // Assign HTML class and id to element
     add_elem.className = "aligner-btn";
@@ -99,11 +99,7 @@ function set_digit_sep(id){
     }
 }
 
-function edit_label(id){
-    const elem_id = document.getElementById(id);
-    let field_obj = myApp.field_objects[id];
-    elem_id.innerHTML = "<input type='text' autofocus='autofocus' value=" + field_obj.label + "></input>"
-}
+
 
 
 function set_hidden(id){
@@ -132,6 +128,7 @@ function btn_action(btn){
         // Action calls the function assigned to the btn_neader
     let action = myApp.item_actions[active];
     action(btn.id);
+
     // }
 	
 	btn.dataset.toggle ^= 1;
@@ -268,7 +265,7 @@ function show_obj_prop(btn, item){
     });
 }
 
-function edit_labels(btn, item){
+function show_labels(btn){
     myApp.actions.active = btn.id;
     
     myApp.field_names.forEach(function (fieldname){
@@ -276,10 +273,30 @@ function edit_labels(btn, item){
         let field_obj = myApp.field_objects[fieldname];
         // Reset the CSS Style
         elem_id.className = "aligner-btn";
-        elem_id.innerHTML = field_obj[item]
+        elem_id.innerHTML = field_obj.label
     });
 }
 
+function edit_label(id){
+    const elem_id = document.getElementById(id);
+    let field_obj = myApp.field_objects[id];
+
+    let pause = elem_id.outerHTML
+    console.log(elem_id.outerHTML)
+
+    elem_id.setAttribute("type", "input")
+
+    console.log(elem_id)
+
+    elem_id.className = "aligner-btn";
+    elem_id.innerHTML = "<input type='text' id='active_text_input' autofocus='autofocus' value=" + field_obj.label + "></input>"
+
+    elem_id.outerHTML = elem_id.outerHTML;
+    console.log(elem_id.outerHTML)
+    elem_id.outerHTML = pause
+
+    
+}
 
 function label_dropdown(){
 
@@ -338,7 +355,7 @@ myApp.main = function main(){
 
     addEventListener("label_dropdown", label_dropdown, null, "change");
 
-    addEventListener("edit_labels", edit_labels, "label");
+    addEventListener("show_labels", show_labels);
 
     addEventListener("show_fields", show_obj_prop, "fieldName");
 
