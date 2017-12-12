@@ -64,11 +64,19 @@ function add_element(fieldname, add_to){
     const add_elem = document.createElement("div");
     
     // Assign HTML class and id to element
-    add_elem.className = "aligner-btn";
-    add_elem.id = fieldname;
+    add_elem.className = "aligner-div";
+    add_elem.id = "div_" + fieldname;
+    add_elem.innerHTML = fieldname;
 
-    const add_content = add_elem.innerHTML = fieldname;
     add_to.appendChild(add_elem);
+
+    const add_btn = document.createElement("btn");
+    
+    add_btn.className = "aligner-btn";
+    add_btn.id = fieldname;
+    add_btn.innerHTML = "Btn";
+
+    add_elem.appendChild(add_btn);
     
     btn_toggle(fieldname, btn_action);
 }
@@ -104,10 +112,13 @@ function set_digit_sep(id){
 
 function set_hidden(id){
 
+    console.log(id)
+
 	const elem_id = document.getElementById(id);
     let field_obj = myApp.field_objects[id];
 
     elem_id.className = field_obj["visible"] === true ? "aligner-btn off" : "aligner-btn on";
+    elem_id.innerHTML = field_obj["visible"] === true ? "Off" : "On";
 
     field_obj["visible"] = !field_obj["visible"];
     
@@ -154,6 +165,7 @@ function highlight_hidden(btn){
     myApp.field_names.forEach(function (fieldname) {
         const elem_id = document.getElementById(fieldname);
         elem_id.className = myApp.field_objects[fieldname][btn.id] === true ? "aligner-btn on" : "aligner-btn off";
+        elem_id.innerHTML =  myApp.field_objects[fieldname][btn.id] === true ? "On" : "Off";
     });
 }
 
@@ -169,6 +181,7 @@ function highlight_digit_sep(btn, set_value=false){
 
     myApp.field_names.forEach(function (field){
         const elem_id = document.getElementById(field);
+        const div_id = document.getElementById("div_" + field);
         
         // Default / resets
         elem_id.className = "aligner-btn";
@@ -180,6 +193,7 @@ function highlight_digit_sep(btn, set_value=false){
         }
         else{
             elem_id.className = "aligner-btn " + sel_status;
+            div_id.className = "aligner-div " + sel_status;
         }
     });
 }
@@ -345,6 +359,7 @@ function label_dropdown(){
 
 
 function addEventListener(elem_id, func, func_args=null, btn_type="click"){
+    console.log(elem_id)
 	const btn = document.getElementById(elem_id);
 	btn.addEventListener(btn_type, func.bind(null, btn, func_args));
 }
@@ -374,7 +389,7 @@ myApp.main = function main(){
 
     addEventListener("show_fields", show_obj_prop, "fieldName");
 
-    //console.log( myApp.field_objects)
+    console.log( myApp.field_objects)
 
 }
 

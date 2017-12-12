@@ -13,10 +13,20 @@
   flex-wrap: wrap;
 }
 
-.aligner-btn { 
+.aligner-div { 
   flex: 1 1 23%;
   margin: 0.2em; 
   background-color: white;
+	padding: 0.1em 0.5em 0.1em 0.5em;
+	border-style: outset;
+	border-color: white;
+} 
+
+.aligner-btn { 
+  flex: 1 1 23%;
+  margin: 0.2em; 
+  float: right;
+  background-color: lightgrey;
 	padding: 0.1em 0.5em 0.1em 0.5em;
 	border-style: outset;
 	border-color: white;
@@ -36,12 +46,12 @@
 }
 
 .on{
-	background-color: greenyellow;
+	background-color: #8DF08C;
 	border-style: outset;
 }
 
 .off{
-	background-color: rgb(245, 141, 133);
+	background-color: #ED9E98;
 	border-style: inset;
 }
 
