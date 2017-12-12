@@ -279,23 +279,21 @@ function show_labels(btn){
 
 function edit_label(id){
     const elem_id = document.getElementById(id);
-    let field_obj = myApp.field_objects[id];
+    const field_obj = myApp.field_objects[id];
+    const add_elem = document.createElement("input");
 
-    let pause = elem_id.outerHTML
-    console.log(elem_id.outerHTML)
+    // Next need to when finish editing to reset the value to the new edited value
+    elem_id.innerHTML = null;
 
-    elem_id.setAttribute("type", "input")
+    // Assign HTML class and id to element
+    add_elem.type = "text";
+    add_elem.id = "active_text_input";
+    add_elem.autofocus = "autofocus";
+    add_elem.value = field_obj.label;
 
-    console.log(elem_id)
+    const add_content = add_elem.innerHTML = field_obj.label;
+    elem_id.appendChild(add_elem);
 
-    elem_id.className = "aligner-btn";
-    elem_id.innerHTML = "<input type='text' id='active_text_input' autofocus='autofocus' value=" + field_obj.label + "></input>"
-
-    elem_id.outerHTML = elem_id.outerHTML;
-    console.log(elem_id.outerHTML)
-    elem_id.outerHTML = pause
-
-    
 }
 
 function label_dropdown(){
