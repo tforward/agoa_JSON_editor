@@ -126,11 +126,12 @@ function btn_action(btn){
     // }
     // else{
         // Action calls the function assigned to the btn_neader
+
     let action = myApp.item_actions[active];
     action(btn.id);
 
     // }
-	
+    
 	btn.dataset.toggle ^= 1;
 }
 
@@ -277,23 +278,39 @@ function show_labels(btn){
     });
 }
 
+function label_state(id){
+   
+
+    const btn = document.getElementById(id);
+    console.log(id)
+    console.log(btn.dataset.toggle)
+    //btn.dataset.toggle = 0
+
+}
+
+
+
 function edit_label(id){
     const elem_id = document.getElementById(id);
     const field_obj = myApp.field_objects[id];
     const add_elem = document.createElement("input");
 
-    // Next need to when finish editing to reset the value to the new edited value
-    elem_id.innerHTML = null;
+    if (elem_id.dataset.toggle == 0){
+        elem_id.innerHTML = null;
+    
+        add_elem.type = "text";
+        add_elem.id = "active_text_input";
+        add_elem.autofocus = "autofocus";
+        add_elem.value = field_obj.label;
+    
+        elem_id.appendChild(add_elem);
+    }
+    else if (elem_id.dataset.toggle == 1){
+        console.log(elem_id.target)
+        //elem_id.innerHTML = field_obj.label;
+    }
 
-    // Assign HTML class and id to element
-    add_elem.type = "text";
-    add_elem.id = "active_text_input";
-    add_elem.autofocus = "autofocus";
-    add_elem.value = field_obj.label;
-
-    const add_content = add_elem.innerHTML = field_obj.label;
-    elem_id.appendChild(add_elem);
-
+    
 }
 
 function label_dropdown(){
