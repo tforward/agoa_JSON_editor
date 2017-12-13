@@ -72,7 +72,8 @@ function add_element(fieldname, add_to){
 
     const add_btn = document.createElement("btn");
     
-    add_btn.className = "aligner-btn";
+    // By Default don't show the button
+    add_btn.className = "hidden";
     add_btn.id = fieldname;
     add_btn.innerHTML = "Btn";
 
@@ -90,63 +91,28 @@ function add_elem_to(elem_id, value){
 	// no sort, reverse_sort, sort
 }
 
-
-function set_digit_sep(id){
-
-	const elem_id = document.getElementById(id);
-    let field = myApp.field_objects[id];
-
-    if (field.format !== null && field.format.hasOwnProperty("digitSeparator")){
-        elem_id.className = field.format["digitSeparator"] === false ?  "aligner-btn on" :  "aligner-btn off";
-
-        // Switches boolean from true or false or vice-versa
-        field.format["digitSeparator"] = !field.format["digitSeparator"];
-    }
-    else{
-        alert("CANNOT SELECT GREYED OUT FIELDS.");
-    }
-}
-
-
-
-
-function set_hidden(id){
-
-    console.log(id)
-
-	const elem_id = document.getElementById(id);
-    let field_obj = myApp.field_objects[id];
-
-    elem_id.className = field_obj["visible"] === true ? "aligner-btn off" : "aligner-btn on";
-    elem_id.innerHTML = field_obj["visible"] === true ? "Off" : "On";
-
-    field_obj["visible"] = !field_obj["visible"];
-    
-}
-
-
 function btn_action(btn){
-
-    // This can be redone to get the value from the html form versus the js object
     
-	// Gets the active btn header
-    let active = myApp.actions.active;
+        // This can be redone to get the value from the html form versus the js object
+        
+        // Gets the active btn header
+        let active = myApp.actions.active;
+        
+        // if (active == undefined){
+        //     alert("PLEASE SELECT AN OPTION FIRST");
+        // }
+        // else{
+            // Action calls the function assigned to the btn_neader
     
-    // if (active == undefined){
-    //     alert("PLEASE SELECT AN OPTION FIRST");
-    // }
-    // else{
-        // Action calls the function assigned to the btn_neader
-
-    let action = myApp.item_actions[active];
-    action(btn.id);
-
-    // }
+        let action = myApp.item_actions[active];
+        action(btn.id);
     
-	btn.dataset.toggle ^= 1;
-}
-
-
+        // }
+        
+        btn.dataset.toggle ^= 1;
+    }
+    
+    
 function btn_toggle(elem_id, func, bool, btn_type="click"){
 
     const btn = document.getElementById(elem_id);
@@ -156,45 +122,83 @@ function btn_toggle(elem_id, func, bool, btn_type="click"){
 }
 
 
-function highlight_hidden(btn){
-    // Highlights fields that are visable and hidden
-    reset_selection()
+function reset(fieldname){
+    const div_id = document.getElementById("div_" + fieldname);
+    div_id.className = "aligner-div";
 
-    myApp.actions.active = btn.id;
+    document.getElementById("selection_dropdown").value = "none";
+}
 
-    myApp.field_names.forEach(function (fieldname) {
-        const elem_id = document.getElementById(fieldname);
-        elem_id.className = myApp.field_objects[fieldname][btn.id] === true ? "aligner-btn on" : "aligner-btn off";
-        elem_id.innerHTML =  myApp.field_objects[fieldname][btn.id] === true ? "On" : "Off";
-    });
+
+function style_digit_sep(id){
+    const elem_id = document.getElementById(id);
+    const field_obj = myApp.field_objects[id];
+
+    if (field_obj.format !== null && field_obj.format.hasOwnProperty("digitSeparator")){
+        elem_id.className = field_obj.format["digitSeparator"] === false ?  "aligner-btn off" :  "aligner-btn on";
+        elem_id.innerHTML = field_obj.format["digitSeparator"] === false ?  "Off" :  "On";
+        return id
+    }
+}
+
+
+function set_digit_sep(id){
+    
+    const field_obj = myApp.field_objects[id];
+
+    // Switches boolean from true or false or vice-versa
+    field_obj.format["digitSeparator"] = !field_obj.format["digitSeparator"];
+    style_digit_sep(id)
 }
 
 
 function highlight_digit_sep(btn, set_value=false){
-
-    reset_selection()
-
     // Sets the active button global
     myApp.actions.active = btn.id;
 
     let sel_status = document.getElementById("selectable").checked === true ? "hidden" : "greyed_out";
 
-    myApp.field_names.forEach(function (field){
-        const elem_id = document.getElementById(field);
-        const div_id = document.getElementById("div_" + field);
-        
+    myApp.field_names.forEach(function (fieldname){
         // Default / resets
-        elem_id.className = "aligner-btn";
+        reset(fieldname)
+        const has_digit = style_digit_sep(fieldname)
     
-        let id = myApp.field_objects[field];
-    
-        if (id.format !== null && id.format.hasOwnProperty("digitSeparator")){
-            elem_id.className = id.format["digitSeparator"] === true ?  "aligner-btn on" :  "aligner-btn off";
-        }
-        else{
+        if (has_digit === undefined){
+            const elem_id = document.getElementById(fieldname);
+            const div_id = document.getElementById("div_" + fieldname);
             elem_id.className = "aligner-btn " + sel_status;
-            div_id.className = "aligner-div " + sel_status;
+            div_id.className = "hidden" //+ sel_status;
         }
+    });
+}
+
+
+function set_hidden(id){
+    const field_obj = myApp.field_objects[id];
+    
+    
+    field_obj["visible"] = !field_obj["visible"];
+    style_visible(id);
+}
+
+
+function style_visible(id){
+    const elem_id = document.getElementById(id);
+    const field_obj = myApp.field_objects[id];
+
+    elem_id.className = field_obj["visible"] === false ? "aligner-btn off" : "aligner-btn on";
+    elem_id.innerHTML = field_obj["visible"] === false ? "Off" : "On";
+}
+
+
+function highlight_visible(btn){
+    myApp.actions.active = btn.id;
+
+    myApp.field_names.forEach(function (fieldname) {
+        //Reset the div
+        reset(fieldname)
+
+        style_visible(fieldname);
     });
 }
 
@@ -206,6 +210,7 @@ function only_selectable(btn){
         elems[field].className = btn.checked === true ? (elems[field].className.replace("greyed_out", "hidden")) : (elems[field].className.replace("hidden", "greyed_out"));
     });
 }
+
 
 function apply_to_all_active_fields(value){
 
@@ -266,6 +271,7 @@ function selection_dropdown(){
     };
 }
 
+
 function toTitleCase(str){
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
@@ -280,6 +286,7 @@ function show_obj_prop(btn, item){
     });
 }
 
+
 function show_labels(btn){
     myApp.actions.active = btn.id;
     
@@ -291,17 +298,6 @@ function show_labels(btn){
         elem_id.innerHTML = field_obj.label
     });
 }
-
-function label_state(id){
-   
-
-    const btn = document.getElementById(id);
-    console.log(id)
-    console.log(btn.dataset.toggle)
-    //btn.dataset.toggle = 0
-
-}
-
 
 
 function edit_label(id){
@@ -323,9 +319,8 @@ function edit_label(id){
         console.log(elem_id.target)
         //elem_id.innerHTML = field_obj.label;
     }
-
-    
 }
+
 
 function label_dropdown(){
 
@@ -375,7 +370,7 @@ myApp.main = function main(){
     
     add_elem_to("content", true);
     
-    addEventListener("visible", highlight_hidden);
+    addEventListener("visible", highlight_visible);
 	
     addEventListener("digitSeparator", highlight_digit_sep);
     
@@ -387,10 +382,7 @@ myApp.main = function main(){
 
     addEventListener("show_labels", show_labels);
 
-    addEventListener("show_fields", show_obj_prop, "fieldName");
-
     console.log( myApp.field_objects)
-
 }
 
 // ======================================================================

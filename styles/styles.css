@@ -24,8 +24,8 @@
 
 .aligner-btn { 
   flex: 1 1 23%;
-  margin: 0.2em; 
   float: right;
+  min-width: 1.6em;
   background-color: lightgrey;
 	padding: 0.1em 0.5em 0.1em 0.5em;
 	border-style: outset;
