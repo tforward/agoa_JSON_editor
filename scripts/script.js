@@ -4,7 +4,7 @@ const myApp = {};
 
 myApp.actions = {active: undefined};
 
-myApp.item_actions = {"visible" : set_hidden, "digitSeparator" : set_digit_sep, "show_labels" : edit_label};
+myApp.item_actions = {"visible" : set_and_style_hidden, "digitSeparator" : set_digit_sep, "show_labels" : edit_label};
 
 // ======================================================================
 
@@ -178,7 +178,6 @@ function set_hidden(id){
     
     
     field_obj["visible"] = !field_obj["visible"];
-    style_visible(id);
 }
 
 
@@ -188,6 +187,12 @@ function style_visible(id){
 
     elem_id.className = field_obj["visible"] === false ? "aligner-btn off" : "aligner-btn on";
     elem_id.innerHTML = field_obj["visible"] === false ? "Off" : "On";
+}
+
+
+function set_and_style_hidden(id){
+    set_hidden(id);
+    style_visible(id);
 }
 
 
@@ -222,8 +227,7 @@ function apply_to_all_active_fields(value){
         
         if  (myApp.actions.active === "visible"){
             if (value === "invert"){
-                elem_id.className = fid["visible"] === false ? "aligner-btn on" : "aligner-btn off";
-                fid["visible"] = !fid["visible"];
+                set_and_style_hidden(field)
             }
             else{
                 elem_id.className = "aligner-btn " + css_value;
