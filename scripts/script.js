@@ -4,7 +4,7 @@ const myApp = {};
 
 myApp.actions = {active: undefined};
 
-myApp.item_actions = {"visible" : set_and_style_hidden, "digitSeparator" : set_digit_sep, "show_labels" : edit_label};
+myApp.item_actions = {"visible" : set_hidden, "digitSeparator" : set_digit_sep, "show_labels" : edit_label};
 
 // ======================================================================
 
@@ -66,7 +66,7 @@ function add_element(fieldname, add_to){
     // Assign HTML class and id to element
     add_elem.className = "aligner-div";
     add_elem.id = "div_" + fieldname;
-    add_elem.innerHTML = fieldname;
+    add_elem.innerHTML = "<label class='lbl_class'>" + fieldname + "</label>";
 
     add_to.appendChild(add_elem);
 
@@ -175,9 +175,8 @@ function highlight_digit_sep(btn, set_value=false){
 
 function set_hidden(id){
     const field_obj = myApp.field_objects[id];
-    
-    
     field_obj["visible"] = !field_obj["visible"];
+    style_visible(id);
 }
 
 
@@ -190,19 +189,12 @@ function style_visible(id){
 }
 
 
-function set_and_style_hidden(id){
-    set_hidden(id);
-    style_visible(id);
-}
-
-
 function highlight_visible(btn){
     myApp.actions.active = btn.id;
 
     myApp.field_names.forEach(function (fieldname) {
         //Reset the div
         reset(fieldname)
-
         style_visible(fieldname);
     });
 }
@@ -220,6 +212,7 @@ function only_selectable(btn){
 function apply_to_all_active_fields(value){
 
     let css_value = value === true ? "on" : "off";
+    let text_value = value === true ? "On" : "Off";
     
     myApp.field_names.forEach(function (field){
         let elem_id = document.getElementById(field);
@@ -227,10 +220,11 @@ function apply_to_all_active_fields(value){
         
         if  (myApp.actions.active === "visible"){
             if (value === "invert"){
-                set_and_style_hidden(field)
+                set_hidden(field)
             }
             else{
                 elem_id.className = "aligner-btn " + css_value;
+                elem_id.innerHTML = text_value;
                 fid["visible"] = value;
             }
         }
@@ -238,12 +232,11 @@ function apply_to_all_active_fields(value){
         else if (myApp.actions.active === "digitSeparator"){
             if (fid.format !== null && fid.format.hasOwnProperty("digitSeparator")){
                 if (value === "invert"){
-                    elem_id.className = fid.format["digitSeparator"] === false ?  "aligner-btn on" :  "aligner-btn off";
-                    // Switches boolean from true or false or vice-versa
-                    fid.format["digitSeparator"] = !fid.format["digitSeparator"];
+                    set_digit_sep(field);
                 }
                 else{
                     elem_id.className = "aligner-btn " + css_value;
+                    elem_id.innerHTML = text_value;
                     fid.format["digitSeparator"] = value;
                 }
             }
@@ -295,17 +288,21 @@ function show_labels(btn){
     myApp.actions.active = btn.id;
     
     myApp.field_names.forEach(function (fieldname){
-        let elem_id = document.getElementById(fieldname);
+        let label_elem = document.getElementById("div_" + fieldname).getElementsByClassName("lbl_class")[0];
+  
         let field_obj = myApp.field_objects[fieldname];
         // Reset the CSS Style
-        elem_id.className = "aligner-btn";
-        elem_id.innerHTML = field_obj.label
+        //elem_id.className = "aligner-btn";
+        label_elem.textContent = field_obj.label
     });
 }
 
 
 function edit_label(id){
-    const elem_id = document.getElementById(id);
+    console.log("hi")
+    let div_elem = "div_" + id
+    const elem_id = document.getElementById(div_elem);
+    console.log(elem_id)
     const field_obj = myApp.field_objects[id];
     const add_elem = document.createElement("input");
 
@@ -358,7 +355,6 @@ function label_dropdown(){
 
 
 function addEventListener(elem_id, func, func_args=null, btn_type="click"){
-    console.log(elem_id)
 	const btn = document.getElementById(elem_id);
 	btn.addEventListener(btn_type, func.bind(null, btn, func_args));
 }
