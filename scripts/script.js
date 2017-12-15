@@ -15,6 +15,9 @@ function parse_json(data){
 
 
 function other(){
+
+    // TODO
+    //    - Need to fix the fields when switching between Visible and Digit sep
     
     // This tool assumes all fields based on the name
 
@@ -92,25 +95,14 @@ function add_elem_to(elem_id, value){
 }
 
 function btn_action(btn){
+    // Gets the active btn header
+    let active = myApp.actions.active;
+
+    let action = myApp.item_actions[active];
+    action(btn.id);
     
-        // This can be redone to get the value from the html form versus the js object
-        
-        // Gets the active btn header
-        let active = myApp.actions.active;
-        
-        // if (active == undefined){
-        //     alert("PLEASE SELECT AN OPTION FIRST");
-        // }
-        // else{
-            // Action calls the function assigned to the btn_neader
-    
-        let action = myApp.item_actions[active];
-        action(btn.id);
-    
-        // }
-        
-        btn.dataset.toggle ^= 1;
-    }
+    btn.dataset.toggle ^= 1;
+}
     
     
 function btn_toggle(elem_id, func, bool, btn_type="click"){
@@ -123,8 +115,8 @@ function btn_toggle(elem_id, func, bool, btn_type="click"){
 
 
 function reset(fieldname){
-    const div_id = document.getElementById("div_" + fieldname);
-    div_id.className = "aligner-div";
+    const label_elem = document.getElementById("div_" + fieldname).getElementsByClassName("lbl_class")[0];
+    label_elem.textContent = fieldname;
 
     document.getElementById("selection_dropdown").value = "none";
 }
@@ -274,12 +266,12 @@ function toTitleCase(str){
 }
 
 
-function show_obj_prop(btn, item){
-    // btn = The html element the function is being called from
+function update_label_text(){
     myApp.field_names.forEach(function (fieldname){
-        let elem_id = document.getElementById(fieldname);
-        let field_obj = myApp.field_objects[fieldname];
-        elem_id.innerHTML = field_obj[item];
+        const label_elem = document.getElementById("div_" + fieldname).getElementsByClassName("lbl_class")[0];
+        const field_obj = myApp.field_objects[fieldname];
+        label_elem.textContent = field_obj.label;
+        reset_btn(fieldname);
     });
 }
 
@@ -288,37 +280,57 @@ function show_labels(btn){
     myApp.actions.active = btn.id;
     
     myApp.field_names.forEach(function (fieldname){
+         reset_btn(fieldname);
         let label_elem = document.getElementById("div_" + fieldname).getElementsByClassName("lbl_class")[0];
+        const btn_elem = document.getElementById(fieldname);
   
         let field_obj = myApp.field_objects[fieldname];
-        // Reset the CSS Style
-        //elem_id.className = "aligner-btn";
+        // Reset the CSS Style so it's visible
+        btn_elem.className = "aligner-btn";
+        btn_elem.textContent = "Edit"
         label_elem.textContent = field_obj.label
     });
 }
 
+function reset_btn(id){
+    const btn_elem = document.getElementById(id);
+    btn_elem.textContent = "Edit";
+    btn_elem.className = "aligner-btn";
+    btn_elem.dataset.toggle = 0;
+}
+
 
 function edit_label(id){
-    console.log("hi")
-    let div_elem = "div_" + id
-    const elem_id = document.getElementById(div_elem);
-    console.log(elem_id)
+    const btn_elem = document.getElementById(id);
     const field_obj = myApp.field_objects[id];
+    const label_elem = document.getElementById("div_" + id).getElementsByClassName("lbl_class")[0];
     const add_elem = document.createElement("input");
 
-    if (elem_id.dataset.toggle == 0){
-        elem_id.innerHTML = null;
+    // Need a handle so that only one can be edit at a time
+    if (btn_elem.dataset.toggle == 0){
+        update_label_text()
+        btn_elem.textContent = "Set"
+        btn_elem.className = "aligner-btn on"
+
+        label_elem.textContent = null;
     
         add_elem.type = "text";
         add_elem.id = "active_text_input";
         add_elem.autofocus = "autofocus";
         add_elem.value = field_obj.label;
     
-        elem_id.appendChild(add_elem);
+        label_elem.appendChild(add_elem);
     }
-    else if (elem_id.dataset.toggle == 1){
-        console.log(elem_id.target)
-        //elem_id.innerHTML = field_obj.label;
+    else if (btn_elem.dataset.toggle == 1){
+        const edit_elem = document.getElementById("active_text_input");
+        field_obj.label = edit_elem.value;
+
+        edit_elem.remove();
+        label_elem.textContent = field_obj.label
+
+        // Reformat the Button
+        btn_elem.textContent = "Edit";
+        btn_elem.className = "aligner-btn";
     }
 }
 
@@ -329,7 +341,7 @@ function label_dropdown(){
     const selected = document.getElementById("label_dropdown").value;
     
     myApp.field_names.forEach(function (fieldname){
-        let field_obj = myApp.field_objects[fieldname];
+        const field_obj = myApp.field_objects[fieldname];
 
         switch (selected){
             case "title_case":
@@ -350,7 +362,7 @@ function label_dropdown(){
         // Add a Preserve Starting State
     });
     // Refresh the labels on screen
-    show_obj_prop("label_options", "label");
+    update_label_text();
 }
 
 
