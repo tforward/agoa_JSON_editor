@@ -17,17 +17,17 @@ function parse_json(data){
 function other(){
 
     // TODO
-    //    - Need to fix the fields when switching between Visible and Digit sep
+    //    - 
     
     // This tool assumes all fields based on the name
 
-	// (key === "label") format to make this look nice remove _ etc. Title Case
+	// (key === "label") format to make this look nice remove _ etc.
 	
     // label rules TitleCase, UpperCase, CamalCase, remove() or user_input
     
     // tooltip
     
-    // date formats
+    // date formats https://developers.arcgis.com/javascript/3/jshelp/intro_popuptemplate.html
 
     // save / load configururation
 
@@ -40,6 +40,27 @@ function other(){
     // error handling
 
 }
+
+// function dateObject(){
+//     dateObject = {
+//         "shortDate": "12/21/1997",
+//         "shortDateLE": "21/12/1997",
+//         "longMonthDayYear": "December 21,1997",
+//         "dayShortMonthYear": "21 Dec 1997",
+//         "longDate":	"Sunday, December 21, 1997",
+//         "shortDateLongTime": "12/21/1997 6:00:00 PM",
+//         "shortDateLELongTime":	"21/12/1997 6:00:00 PM",
+//         "shortDateShortTime":	"12/21/1997 6:00 PM",
+//         "shortDateLEShortTime":	"21/12/1997 6:00 PM",
+//         "shortDateShortTime24":	"12/21/1997 18:00",
+//         "shortDateLEShortTime24":	"21/12/1997 18:00",
+//         "shortDateShortTime24":	"12/21/1997 18:00",
+//         "shortDateLEShortTime24":	"21/12/1997 18:00",
+//         "longMonthYear":	"December 1997",
+//         "shortMonthYear":	"Dec 1997",
+//         "year":	"1997"
+//     }
+// }
 
 
 function get_unique_field_objs(json_data) {
@@ -94,6 +115,7 @@ function add_elem_to(elem_id, value){
 	// no sort, reverse_sort, sort
 }
 
+
 function btn_action(btn){
     // Gets the active btn header
     let active = myApp.actions.active;
@@ -114,11 +136,20 @@ function btn_toggle(elem_id, func, bool, btn_type="click"){
 }
 
 
-function reset(fieldname){
-    const label_elem = document.getElementById("div_" + fieldname).getElementsByClassName("lbl_class")[0];
-    label_elem.textContent = fieldname;
+function reset_div(fieldname){
+    const div_id = document.getElementById("div_" + fieldname);
+    const label_elem = div_id.getElementsByClassName("lbl_class")[0];
 
-    document.getElementById("selection_dropdown").value = "none";
+    label_elem.textContent = fieldname;
+    div_id.className = "aligner-div";
+}
+
+
+function reset_btn(id){
+    const btn_elem = document.getElementById(id);
+    btn_elem.textContent = "Edit";
+    btn_elem.className = "aligner-btn";
+    btn_elem.dataset.toggle = 0;
 }
 
 
@@ -147,19 +178,18 @@ function set_digit_sep(id){
 function highlight_digit_sep(btn, set_value=false){
     // Sets the active button global
     myApp.actions.active = btn.id;
-
-    let sel_status = document.getElementById("selectable").checked === true ? "hidden" : "greyed_out";
+    reset_selection();
 
     myApp.field_names.forEach(function (fieldname){
         // Default / resets
-        reset(fieldname)
+        reset_div(fieldname)
         const has_digit = style_digit_sep(fieldname)
     
         if (has_digit === undefined){
             const elem_id = document.getElementById(fieldname);
             const div_id = document.getElementById("div_" + fieldname);
-            elem_id.className = "aligner-btn " + sel_status;
-            div_id.className = "hidden" //+ sel_status;
+            elem_id.className = "aligner-btn";
+            div_id.className = "hidden"
         }
     });
 }
@@ -184,9 +214,11 @@ function style_visible(id){
 function highlight_visible(btn){
     myApp.actions.active = btn.id;
 
+    reset_selection();
+
     myApp.field_names.forEach(function (fieldname) {
         //Reset the div
-        reset(fieldname)
+        reset_div(fieldname)
         style_visible(fieldname);
     });
 }
@@ -278,9 +310,12 @@ function update_label_text(){
 
 function show_labels(btn){
     myApp.actions.active = btn.id;
-    
+
+    reset_selection();
+ 
     myApp.field_names.forEach(function (fieldname){
-         reset_btn(fieldname);
+        reset_div(fieldname);
+        reset_btn(fieldname);
         let label_elem = document.getElementById("div_" + fieldname).getElementsByClassName("lbl_class")[0];
         const btn_elem = document.getElementById(fieldname);
   
@@ -290,13 +325,6 @@ function show_labels(btn){
         btn_elem.textContent = "Edit"
         label_elem.textContent = field_obj.label
     });
-}
-
-function reset_btn(id){
-    const btn_elem = document.getElementById(id);
-    btn_elem.textContent = "Edit";
-    btn_elem.className = "aligner-btn";
-    btn_elem.dataset.toggle = 0;
 }
 
 
@@ -385,8 +413,6 @@ myApp.main = function main(){
     addEventListener("visible", highlight_visible);
 	
     addEventListener("digitSeparator", highlight_digit_sep);
-    
-    addEventListener("selectable", only_selectable);
 	
     addEventListener("selection_dropdown", selection_dropdown, null, "change");
 
