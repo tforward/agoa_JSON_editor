@@ -175,7 +175,7 @@ function set_digit_sep(id){
 }
 
 
-function highlight_digit_sep(btn, set_value=false){
+function highlight_digit_sep(btn){
     // Sets the active button global
     myApp.actions.active = btn.id;
     reset_selection();
@@ -191,6 +191,27 @@ function highlight_digit_sep(btn, set_value=false){
             elem_id.className = "aligner-btn";
             div_id.className = "hidden"
         }
+    });
+}
+
+function style_dates(fieldname){
+    const elem_id = document.getElementById(id);
+    const field_obj = myApp.field_objects[id];
+
+    elem_id.className = field_obj["visible"] === false ? "aligner-btn off" : "aligner-btn on";
+    elem_id.innerHTML = field_obj["visible"] === false ? "Off" : "On";
+}
+
+
+function show_dates(btn){
+    // Sets the active button global
+    myApp.actions.active = btn.id;
+    reset_selection();
+
+    myApp.field_names.forEach(function (fieldname){
+        // Default / resets
+        reset_div(fieldname)
+        style_dates(fieldname)
     });
 }
 
@@ -419,6 +440,8 @@ myApp.main = function main(){
     addEventListener("label_dropdown", label_dropdown, null, "change");
 
     addEventListener("show_labels", show_labels);
+
+    addEventListener("show_dates", show_dates);
 
     console.log( myApp.field_objects)
 }
