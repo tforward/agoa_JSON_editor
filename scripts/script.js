@@ -39,6 +39,8 @@ function other(){
 
     // error handling
 
+    // places (decimals)
+
 }
 
 // function dateObject(){
@@ -91,8 +93,9 @@ function add_element(fieldname, add_to){
     add_elem.className = "aligner-div";
     add_elem.id = "div_" + fieldname;
     add_elem.innerHTML = "<label class='lbl_class'>" + fieldname + "</label>";
-
     add_to.appendChild(add_elem);
+
+    add_toggle_div(fieldname, add_elem)
 
     const add_btn = document.createElement("btn");
     
@@ -104,6 +107,203 @@ function add_element(fieldname, add_to){
     add_elem.appendChild(add_btn);
     
     btn_toggle(fieldname, btn_action);
+}
+
+function add_toggle_div(fieldname, add_to){
+    const add_tog_div = document.createElement("div");
+    add_tog_div.className = "toggle_div";
+    add_to.appendChild(add_tog_div);
+
+    add_toggle_img(fieldname, add_tog_div, "label_", set_n_style_label);
+    style_label(fieldname);
+
+    add_toggle_img(fieldname, add_tog_div, "vis_", set_n_style_visibility);
+    style_visibility(fieldname);
+
+    add_toggle_img(fieldname, add_tog_div, "digit_", set_n_style_digit_sep);
+    style_digit_sep(fieldname);
+
+    add_toggle_img(fieldname, add_tog_div, "date_", set_n_style_date);
+    style_date(fieldname);
+
+    add_toggle_img(fieldname, add_tog_div, "decim_", set_n_style_decim);
+    style_decim(fieldname);
+}
+
+
+function add_toggle_img(fieldname, add_to, prefix, func){
+    const add_tog = document.createElement("img");
+    add_tog.id = prefix + fieldname;
+    add_tog.width = 20;
+    add_tog.height = 20;
+    add_to.appendChild(add_tog);
+    btn_toggle(add_tog.id, func);
+}
+
+function set_n_style_visibility(fieldname){
+    // Remove the "vis_" from fieldname
+    const f_id = fieldname.id.split(/_(.+)/)[1]
+    toggle_visibility(f_id);
+    style_visibility(f_id);
+}
+
+function set_n_style_label(fieldname){
+    // Remove the "label_" from fieldname
+    const d_id = fieldname.id.split(/_(.+)/)[1]
+    toggle_label(d_id);
+    style_label(d_id);
+}
+
+function set_n_style_digit_sep(fieldname){
+    // Remove the "digit_" from fieldname
+    const d_id = fieldname.id.split(/_(.+)/)[1]
+    toggle_digit_sep(d_id);
+    style_digit_sep(d_id);
+}
+
+function set_n_style_date(fieldname){
+    // Remove the "date_" from fieldname
+    const d_id = fieldname.id.split(/_(.+)/)[1]
+    toggle_date(d_id);
+    style_date(d_id);
+}
+
+function toggle_date(fieldname){
+    const field_obj = myApp.field_objects[fieldname];
+    // Switches boolean from true or false or vice-versa
+    if (field_obj.format !== null && field_obj.format.hasOwnProperty("dateFormat")){
+        field_obj.format["dateFormat"] = !field_obj.format["dateFormat"];
+    }
+}
+
+function set_n_style_decim(fieldname){
+    style_decim(fieldname);
+}
+
+function style_decim(fieldname){
+    const field_obj = myApp.field_objects[fieldname];
+    const elem_id = document.getElementById("decim_" + fieldname);
+
+    if (field_obj.format !== null && field_obj.format.hasOwnProperty("places")){
+        const decimals = field_obj.format["places"];
+        elem_id.src = "images/decimal.png";
+        elem_id.alt, elem_id.title =  'Has ' + decimals + ' Decimal(s)';
+    }
+    else{
+        elem_id.src = "images/na.png";
+        elem_id.alt, elem_id.title =  "N/A"
+        elem_id.className = "notApplicable";
+    }
+}
+
+
+function style_date(fieldname){
+    const field_obj = myApp.field_objects[fieldname];
+    const elem_id = document.getElementById("date_" + fieldname);
+    const date = ["shortDate", "shortDateLE", "longMonthDayYear", "dayShortMonthYear",
+    "longDate", "longMonthYear", "shortMonthYear", "year"]
+
+   const dateTime = ["shortDateLongTime", "shortDateLELongTime", "shortDateShortTime",
+    "shortDateLEShortTime", "shortDateShortTime24", "shortDateLEShortTime24",
+     "shortDateShortTime24", "shortDateLEShortTime24"]
+
+    if (field_obj.format !== null && field_obj.format.hasOwnProperty("dateFormat")){
+        const d = field_obj.format["dateFormat"]
+
+        if (dateTime.indexOf(d) > -1){
+            elem_id.src = "images/dateTime.png";
+            elem_id.alt, elem_id.title =  "Has Date & Time";
+        }
+        else if(date.indexOf(d) > -1){
+            elem_id.src = "images/date.png";
+            elem_id.alt, elem_id.title =  "Has Date";
+        }
+    }
+    else{
+        elem_id.src = "images/date_na.png";
+        elem_id.alt, elem_id.title =  "N/A"
+        elem_id.className = "notApplicable";
+    }
+}
+
+
+function toggle_digit_sep(fieldname){
+    const field_obj = myApp.field_objects[fieldname];
+    // Switches boolean from true or false or vice-versa
+    if (field_obj.format !== null && field_obj.format.hasOwnProperty("digitSeparator")){
+        field_obj.format["digitSeparator"] = !field_obj.format["digitSeparator"];
+    }
+}
+
+function style_digit_sep(fieldname){
+    const field_obj = myApp.field_objects[fieldname];
+    const elem_id = document.getElementById("digit_" + fieldname);
+
+    if (field_obj.format !== null && field_obj.format.hasOwnProperty("digitSeparator")){
+        elem_id.src = !field_obj.format["digitSeparator"] === false ? "images/comma_off.png" : "images/comma_on.png";
+        elem_id.alt, elem_id.title =  !field_obj.format["digitSeparator"] === false ? "Separator Off" : "Separator On";
+    }
+    else{
+        elem_id.src = "images/comma_na.png";
+        elem_id.alt, elem_id.title =  "N/A"
+        elem_id.className = "notApplicable";
+    }
+}
+
+
+function toggle_visibility(fieldname){
+    const field_obj = myApp.field_objects[fieldname];
+    field_obj["visible"] = !field_obj["visible"];
+}
+
+function style_visibility(fieldname){
+    const field_obj = myApp.field_objects[fieldname];
+    const elem_id = document.getElementById("vis_" + fieldname);
+
+    elem_id.src = !field_obj["visible"] === false ? "images/light_on.svg" : "images/light_off.svg";
+    elem_id.alt, elem_id.title = !field_obj["visible"] === false ? "Visible" : "Hidden";
+}
+
+function style_label(fieldname){
+    const elem_id = document.getElementById("label_" + fieldname);
+
+    if (elem_id.dataset.toggle == 0){
+        elem_id.src = "images/label.png";
+        elem_id.alt, elem_id.title = "Edit Label";
+    }
+    else{
+        elem_id.src = "images/set_label.png";
+        elem_id.alt, elem_id.title = "Set Label";
+    }
+}
+
+function toggle_label(id){
+    const btn_elem = document.getElementById("label_" + id);
+    const field_obj = myApp.field_objects[id];
+    const label_elem = document.getElementById("div_" + id).getElementsByClassName("lbl_class")[0];
+    const add_elem = document.createElement("input");
+
+    // Need a handle so that only one can be edit at a time
+    if (btn_elem.dataset.toggle == 0){
+
+        label_elem.textContent = null;
+    
+        add_elem.type = "text";
+        add_elem.id = "active_text_input";
+        add_elem.autofocus = "autofocus";
+        add_elem.value = field_obj.label;
+    
+        label_elem.appendChild(add_elem);
+        btn_elem.dataset.toggle = 1;
+    }
+    else if (btn_elem.dataset.toggle == 1){
+        const edit_elem = document.getElementById("active_text_input");
+        field_obj.label = edit_elem.value;
+
+        edit_elem.remove();
+        label_elem.textContent = field_obj.label
+        btn_elem.dataset.toggle = 0;
+    }
 }
 
 
@@ -153,7 +353,7 @@ function reset_btn(id){
 }
 
 
-function style_digit_sep(id){
+function style_digit_sep2(id){
     const elem_id = document.getElementById(id);
     const field_obj = myApp.field_objects[id];
 
@@ -216,10 +416,10 @@ function show_dates(btn){
 }
 
 
-function set_hidden(id){
-    const field_obj = myApp.field_objects[id];
+function set_hidden(fieldname){
+    const field_obj = myApp.field_objects[fieldname];
     field_obj["visible"] = !field_obj["visible"];
-    style_visible(id);
+    style_visible(fieldname);
 }
 
 

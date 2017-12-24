@@ -17,7 +17,7 @@
 .aligner-div { 
   margin: 0.2em;
   background-color: white;
-	padding: 0.1em 2em 0.1em 0.5em;
+	padding: 0.1em 0em 0.1em 0.5em;
 	border-style: outset;
   border-color: white;
 
@@ -25,21 +25,21 @@
   vertical-align: top;
   color: black;
   font-size: 1em;
-  flex: 1 1 21em;
-  max-width: 21em;
-  height: 1em;
+  flex: 1 1 22em;
+  max-width: 22em;
+  height: 1.3em;
   overflow: hidden;
   transition: 1.3s;
 } 
 
-.aligner-div:hover { 
-  flex: 1 1 21em;
+/* .aligner-div:hover { 
+  flex: 1 1 22em;
   height: 12em;
   background: lightgrey;
   vertical-align: top;
   cursor: pointer;
 
-} 
+}  */
 
 .aligner-btn { 
   flex: 1 1 23%;
@@ -71,6 +71,12 @@
 	border-style: inset;
 }
 
+.toggle_div{
+  background-color: white;
+ 
+  float: right;
+}
+
 
 .greyed_out{
 	opacity: 0.6;
@@ -79,4 +85,8 @@
 
 .hidden{
 	display: none;
+}
+
+.notApplicable{
+  opacity: 0.6;
 }
