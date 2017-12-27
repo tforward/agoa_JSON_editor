@@ -270,6 +270,7 @@ function style_label(fieldname){
     if (elem_id.dataset.toggle == 0){
         elem_id.src = "images/label.png";
         elem_id.alt, elem_id.title = "Edit Label";
+        elem_id.className = null;
     }
     else{
         elem_id.src = "images/set_label.png";
@@ -277,15 +278,40 @@ function style_label(fieldname){
     }
 }
 
+
+function reset_active_input(){
+    const edit_elem = document.getElementById("active_text_input");
+
+    if (edit_elem != null){
+        const active_btn = document.getElementsByClassName("active_btn")[0];
+        const d_id = active_btn.id.split(/_(.+)/)[1]
+
+        set_btn_label(d_id);
+        style_label(d_id);
+    }
+}
+
+
+function submit_label(btn, fieldname, event){
+    // If "Enter" is hit
+    // PROB NEED TO DELETE THE EVENT HANDLE AFTER CLOSE OF THE BUTTON??????
+    if (event.keyCode === 13){
+        set_btn_label(fieldname)
+        style_label(fieldname);
+    }
+}
+
+
 function toggle_label(id){
     const btn_elem = document.getElementById("label_" + id);
     const field_obj = myApp.field_objects[id];
     const label_elem = document.getElementById("div_" + id).getElementsByClassName("lbl_class")[0];
     const add_elem = document.createElement("input");
+    
 
     // Need a handle so that only one can be edit at a time
     if (btn_elem.dataset.toggle == 0){
-
+        reset_active_input();
         label_elem.textContent = null;
     
         add_elem.type = "text";
@@ -295,23 +321,30 @@ function toggle_label(id){
     
         label_elem.appendChild(add_elem);
         btn_elem.dataset.toggle = 1;
+        btn_elem.className = "active_btn";
+        addEventListener("active_text_input", submit_label, id, "keyup");
     }
     else if (btn_elem.dataset.toggle == 1){
-        const edit_elem = document.getElementById("active_text_input");
-        field_obj.label = edit_elem.value;
-
-        edit_elem.remove();
-        label_elem.textContent = field_obj.label
-        btn_elem.dataset.toggle = 0;
+        set_btn_label(id)
     }
+}
+
+function set_btn_label(id){
+    const btn_elem = document.getElementById("label_" + id);
+    const field_obj = myApp.field_objects[id];
+    const label_elem = document.getElementById("div_" + id).getElementsByClassName("lbl_class")[0];
+    const edit_elem = document.getElementById("active_text_input");
+
+    field_obj.label = edit_elem.value;
+    edit_elem.remove();
+    label_elem.textContent = field_obj.label;
+    btn_elem.dataset.toggle = 0;
 }
 
 
 function add_elem_to(elem_id, value){
-
     const add_to = document.getElementById(elem_id);
     myApp.field_names.forEach(fieldname => add_element(fieldname, add_to));
-    
 	// no sort, reverse_sort, sort
 }
 
@@ -615,9 +648,9 @@ function label_dropdown(){
 }
 
 
-function addEventListener(elem_id, func, func_args=null, btn_type="click"){
+function addEventListener(elem_id, func, func_args=null, event="click"){
 	const btn = document.getElementById(elem_id);
-	btn.addEventListener(btn_type, func.bind(null, btn, func_args));
+	btn.addEventListener(event, func.bind(null, btn, func_args));
 }
 
 // ======================================================================
