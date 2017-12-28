@@ -41,9 +41,17 @@ function other(){
 
     // places (decimals)
 
+    //modal 
+
+    //https://codepen.io/bchalker/pen/pyvBmq
+
+    //https://css-tricks.com/considerations-styling-modal/
+
 }
 
 // function dateObject(){
+
+
 //     dateObject = {
 //         "shortDate": "12/21/1997",
 //         "shortDateLE": "21/12/1997",
