@@ -4,7 +4,7 @@ const myApp = {};
 
 myApp.actions = {active: undefined};
 
-myApp.item_actions = {"visible" : set_hidden, "digitSeparator" : set_digit_sep, "show_labels" : edit_label};
+myApp.item_actions = {"digitSeparator" : set_digit_sep, "show_labels" : edit_label};
 
 // ======================================================================
 
@@ -256,6 +256,7 @@ function toggle_visibility(fieldname){
     field_obj["visible"] = !field_obj["visible"];
 }
 
+
 function style_visibility(fieldname){
     const field_obj = myApp.field_objects[fieldname];
     const elem_id = document.getElementById("vis_" + fieldname);
@@ -378,26 +379,6 @@ function reset_div(fieldname){
 }
 
 
-function reset_btn(id){
-    const btn_elem = document.getElementById(id);
-    btn_elem.textContent = "Edit";
-    btn_elem.className = "aligner-btn";
-    btn_elem.dataset.toggle = 0;
-}
-
-
-function style_digit_sep2(id){
-    const elem_id = document.getElementById(id);
-    const field_obj = myApp.field_objects[id];
-
-    if (field_obj.format !== null && field_obj.format.hasOwnProperty("digitSeparator")){
-        elem_id.className = field_obj.format["digitSeparator"] === false ?  "aligner-btn off" :  "aligner-btn on";
-        elem_id.innerHTML = field_obj.format["digitSeparator"] === false ?  "Off" :  "On";
-        return id
-    }
-}
-
-
 function set_digit_sep(id){
     
     const field_obj = myApp.field_objects[id];
@@ -408,74 +389,56 @@ function set_digit_sep(id){
 }
 
 
-function highlight_digit_sep(btn){
+// ============= FILTERS =============
+
+
+function format_filter(btn, prop){
     // Sets the active button global
     myApp.actions.active = btn.id;
     reset_selection();
 
     myApp.field_names.forEach(function (fieldname){
-        // Default / resets
-        reset_div(fieldname)
-        const has_digit = style_digit_sep(fieldname)
-    
-        if (has_digit === undefined){
-            const elem_id = document.getElementById(fieldname);
-            const div_id = document.getElementById("div_" + fieldname);
-            elem_id.className = "aligner-btn";
-            div_id.className = "hidden"
-        }
-    });
-}
+        const field_obj = myApp.field_objects[fieldname];
+        const div_id = document.getElementById("div_" + fieldname);
 
-function style_dates(fieldname){
-    const elem_id = document.getElementById(id);
-    const field_obj = myApp.field_objects[id];
-
-    elem_id.className = field_obj["visible"] === false ? "aligner-btn off" : "aligner-btn on";
-    elem_id.innerHTML = field_obj["visible"] === false ? "Off" : "On";
+        div_id.className =
+         (field_obj.format == null || !field_obj.format.hasOwnProperty(prop)) ?
+          "hidden" : "aligner-div";
+    })
 }
 
 
-function show_dates(btn){
+function filter_prop_bool(btn, args){
     // Sets the active button global
     myApp.actions.active = btn.id;
     reset_selection();
 
     myApp.field_names.forEach(function (fieldname){
-        // Default / resets
-        reset_div(fieldname)
-        style_dates(fieldname)
-    });
+        const field_obj = myApp.field_objects[fieldname];
+        const div_id = document.getElementById("div_" + fieldname);
+
+        div_id.className = (field_obj[args[0]] == args[1]) ?
+          "hidden" : "aligner-div";
+    })
 }
 
 
-function set_hidden(fieldname){
-    const field_obj = myApp.field_objects[fieldname];
-    field_obj["visible"] = !field_obj["visible"];
-    style_visible(fieldname);
-}
+
+// function set_hidden(fieldname){
+//     const field_obj = myApp.field_objects[fieldname];
+//     field_obj["visible"] = !field_obj["visible"];
+//     style_visible(fieldname);
+// }
 
 
-function style_visible(id){
-    const elem_id = document.getElementById(id);
-    const field_obj = myApp.field_objects[id];
+// function style_visible(id){
+//     const elem_id = document.getElementById(id);
+//     const field_obj = myApp.field_objects[id];
 
-    elem_id.className = field_obj["visible"] === false ? "aligner-btn off" : "aligner-btn on";
-    elem_id.innerHTML = field_obj["visible"] === false ? "Off" : "On";
-}
+//     elem_id.className = field_obj["visible"] === false ? "aligner-btn off" : "aligner-btn on";
+//     elem_id.innerHTML = field_obj["visible"] === false ? "Off" : "On";
+// }
 
-
-function highlight_visible(btn){
-    myApp.actions.active = btn.id;
-
-    reset_selection();
-
-    myApp.field_names.forEach(function (fieldname) {
-        //Reset the div
-        reset_div(fieldname)
-        style_visible(fieldname);
-    });
-}
 
 
 function only_selectable(btn){
@@ -557,26 +520,18 @@ function update_label_text(){
         const label_elem = document.getElementById("div_" + fieldname).getElementsByClassName("lbl_class")[0];
         const field_obj = myApp.field_objects[fieldname];
         label_elem.textContent = field_obj.label;
-        reset_btn(fieldname);
     });
 }
 
 
 function show_labels(btn){
     myApp.actions.active = btn.id;
-
     reset_selection();
  
     myApp.field_names.forEach(function (fieldname){
-        reset_div(fieldname);
-        reset_btn(fieldname);
         let label_elem = document.getElementById("div_" + fieldname).getElementsByClassName("lbl_class")[0];
-        const btn_elem = document.getElementById(fieldname);
-  
         let field_obj = myApp.field_objects[fieldname];
-        // Reset the CSS Style so it's visible
-        btn_elem.className = "aligner-btn";
-        btn_elem.textContent = "Edit"
+        reset_div(fieldname);
         label_elem.textContent = field_obj.label
     });
 }
@@ -663,10 +618,10 @@ myApp.main = function main(){
     myApp.field_names = Object.keys(myApp.field_objects);
     
     add_elem_to("content", true);
+
+    addEventListener("filter_visible", filter_prop_bool, ["visible", false]);
     
-    addEventListener("visible", highlight_visible);
-	
-    addEventListener("digitSeparator", highlight_digit_sep);
+    addEventListener("filter_digitSeparator", format_filter, "digitSeparator");
 	
     addEventListener("selection_dropdown", selection_dropdown, null, "change");
 
@@ -674,9 +629,9 @@ myApp.main = function main(){
 
     addEventListener("show_labels", show_labels);
 
-    addEventListener("show_dates", show_dates);
+    addEventListener("filter_dates", format_filter, "dateFormat");
 
-    console.log( myApp.field_objects)
+    console.log(myApp.field_objects);
 }
 
 // ======================================================================
