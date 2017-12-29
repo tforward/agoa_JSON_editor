@@ -64,8 +64,6 @@ function other(){
 //         "shortDateLEShortTime":	"21/12/1997 6:00 PM",
 //         "shortDateShortTime24":	"12/21/1997 18:00",
 //         "shortDateLEShortTime24":	"21/12/1997 18:00",
-//         "shortDateShortTime24":	"12/21/1997 18:00",
-//         "shortDateLEShortTime24":	"21/12/1997 18:00",
 //         "longMonthYear":	"December 1997",
 //         "shortMonthYear":	"Dec 1997",
 //         "year":	"1997"
@@ -102,19 +100,7 @@ function add_element(fieldname, add_to){
     add_elem.id = "div_" + fieldname;
     add_elem.innerHTML = "<label class='lbl_class'>" + fieldname + "</label>";
     add_to.appendChild(add_elem);
-
-    add_toggle_div(fieldname, add_elem)
-
-    const add_btn = document.createElement("btn");
-    
-    // By Default don't show the button
-    add_btn.className = "hidden";
-    add_btn.id = fieldname;
-    add_btn.innerHTML = "Btn";
-
-    add_elem.appendChild(add_btn);
-    
-    btn_toggle(fieldname, btn_action);
+    add_toggle_div(fieldname, add_elem);
 }
 
 function add_toggle_div(fieldname, add_to){
@@ -140,11 +126,16 @@ function add_toggle_div(fieldname, add_to){
 
 
 function add_toggle_img(fieldname, add_to, prefix, func){
+    const add_span = document.createElement("span");
     const add_tog = document.createElement("img");
+
+    add_span.id = "span" + prefix + fieldname;
+
+    add_to.appendChild(add_span);
     add_tog.id = prefix + fieldname;
     add_tog.width = 20;
     add_tog.height = 20;
-    add_to.appendChild(add_tog);
+    add_span.appendChild(add_tog);
     btn_toggle(add_tog.id, func);
 }
 
@@ -178,10 +169,28 @@ function set_n_style_date(fieldname){
 
 function toggle_date(fieldname){
     const field_obj = myApp.field_objects[fieldname];
-    // Switches boolean from true or false or vice-versa
+
     if (field_obj.format !== null && field_obj.format.hasOwnProperty("dateFormat")){
         field_obj.format["dateFormat"] = !field_obj.format["dateFormat"];
+        
+        console.log(fieldname)
+        hover_dropdown(fieldname);
     }
+
+}
+
+
+function hover_dropdown(fieldname){
+    const get_span = document.getElementById("spandate_" + fieldname);
+    const outer_div = document.createElement("div");
+    const inner_div = document.createElement("div");
+
+    
+    outer_div.className = "dropdown";
+    inner_div.className = "dropdown-content";
+    inner_div.innerText = "TEST"
+    outer_div.appendChild(inner_div);
+    get_span.insertBefore(outer_div, null);
 }
 
 function set_n_style_decim(fieldname){
@@ -209,27 +218,27 @@ function style_date(fieldname){
     const field_obj = myApp.field_objects[fieldname];
     const elem_id = document.getElementById("date_" + fieldname);
     const date = ["shortDate", "shortDateLE", "longMonthDayYear", "dayShortMonthYear",
-    "longDate", "longMonthYear", "shortMonthYear", "year"]
+    "longDate", "longMonthYear", "shortMonthYear", "year"];
 
-   const dateTime = ["shortDateLongTime", "shortDateLELongTime", "shortDateShortTime",
+    const dateTime = ["shortDateLongTime", "shortDateLELongTime", "shortDateShortTime",
     "shortDateLEShortTime", "shortDateShortTime24", "shortDateLEShortTime24",
-     "shortDateShortTime24", "shortDateLEShortTime24"]
+     "shortDateShortTime24", "shortDateLEShortTime24"];
 
     if (field_obj.format !== null && field_obj.format.hasOwnProperty("dateFormat")){
-        const d = field_obj.format["dateFormat"]
+        const d = field_obj.format["dateFormat"];
 
         if (dateTime.indexOf(d) > -1){
             elem_id.src = "images/dateTime.png";
-            elem_id.alt, elem_id.title =  "Has Date & Time";
+            elem_id.alt, elem_id.title =  d;
         }
         else if(date.indexOf(d) > -1){
             elem_id.src = "images/date.png";
-            elem_id.alt, elem_id.title =  "Has Date";
+            elem_id.alt, elem_id.title =  d;
         }
     }
     else{
         elem_id.src = "images/date_na.png";
-        elem_id.alt, elem_id.title =  "N/A"
+        elem_id.alt, elem_id.title =  "N/A";
         elem_id.className = "notApplicable";
     }
 }
@@ -242,6 +251,7 @@ function toggle_digit_sep(fieldname){
         field_obj.format["digitSeparator"] = !field_obj.format["digitSeparator"];
     }
 }
+
 
 function style_digit_sep(fieldname){
     const field_obj = myApp.field_objects[fieldname];
@@ -272,6 +282,7 @@ function style_visibility(fieldname){
     elem_id.src = !field_obj["visible"] === false ? "images/light_on.svg" : "images/light_off.svg";
     elem_id.alt, elem_id.title = !field_obj["visible"] === false ? "Visible" : "Hidden";
 }
+
 
 function style_label(fieldname){
     const elem_id = document.getElementById("label_" + fieldname);
