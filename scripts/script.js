@@ -128,15 +128,30 @@ function add_toggle_div(fieldname, add_to){
 function add_toggle_img(fieldname, add_to, prefix, func){
     const add_span = document.createElement("span");
     const add_tog = document.createElement("img");
+    const add_div_dropdown= document.createElement("div");
+
+    add_div_dropdown.className = "dropdown";
+    add_div_dropdown.dataset.prefix= prefix;
 
     add_span.id = "span" + prefix + fieldname;
-
-    add_to.appendChild(add_span);
+    add_to.appendChild(add_div_dropdown);
+    add_div_dropdown.appendChild(add_span);
     add_tog.id = prefix + fieldname;
     add_tog.width = 20;
     add_tog.height = 20;
     add_span.appendChild(add_tog);
     btn_toggle(add_tog.id, func);
+}
+
+function add_dropdown(){
+    const add_div_content= document.createElement("div");
+
+
+
+    //add_div_dropdown.appendChild(add_span);
+
+    //add_div_content.className = "dropdown-content"
+    //add_div_content.innerText = "test";
 }
 
 function set_n_style_visibility(fieldname){
@@ -172,25 +187,27 @@ function toggle_date(fieldname){
 
     if (field_obj.format !== null && field_obj.format.hasOwnProperty("dateFormat")){
         field_obj.format["dateFormat"] = !field_obj.format["dateFormat"];
-        
-        console.log(fieldname)
-        hover_dropdown(fieldname);
+        date_dropdown(fieldname);
     }
 
 }
 
 
-function hover_dropdown(fieldname){
-    const get_span = document.getElementById("spandate_" + fieldname);
-    const outer_div = document.createElement("div");
-    const inner_div = document.createElement("div");
+function date_dropdown(fieldname){
 
-    
-    outer_div.className = "dropdown";
-    inner_div.className = "dropdown-content";
-    inner_div.innerText = "TEST"
-    outer_div.appendChild(inner_div);
-    get_span.insertBefore(outer_div, null);
+    // this needs to be a toggle
+    const elem_id = document.getElementById("div_" + fieldname);
+    let toggle_div = elem_id.getElementsByClassName("toggle_div")[0];
+    // [3] is the date element however should have a better way to id this elem
+    let dropdown_div = toggle_div.getElementsByClassName("dropdown")[3];
+
+
+    const add_div_content= document.createElement("div");
+
+    add_div_content.className = "dropdown-content"
+    add_div_content.innerText = "test";
+
+    dropdown_div.appendChild(add_div_content);
 }
 
 function set_n_style_decim(fieldname){

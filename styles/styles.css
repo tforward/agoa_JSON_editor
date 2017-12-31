@@ -28,7 +28,6 @@
   flex: 1 1 22em;
   max-width: 22em;
   height: 1.3em;
-  overflow: hidden;
   transition: 1.3s;
 } 
 
@@ -95,15 +94,33 @@
 }
 
 .dropdown-content {
+  background-Color: Red;
   display: none;
   position: absolute;
   background-color: #f9f9f9;
-  min-width: 160px;
+  min-width: 200px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   padding: 12px 16px;
   z-index: 1;
+  left: 20px;
+  top: -20px;
+  cursor: pointer;
 }
+
+.dropdown-content a {
+    color: black;
+    padding: 1px 1px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.dropdown-content a:hover {background-color: #f1f1f1}
+
+.dropdown-content a:active {background-color: #f1f1f1}
+
+#date_selected {background-color: lightblue}
 
 .dropdown:hover .dropdown-content {
   display: block;
+  height: 3em;
 }
