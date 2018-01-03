@@ -204,8 +204,22 @@ function date_dropdown(fieldname){
 
     const add_div_content= document.createElement("div");
 
+    const add_anchor= document.createElement("a");
+    const add_anchor2= document.createElement("a");
+
     add_div_content.className = "dropdown-content"
-    add_div_content.innerText = "test";
+
+    add_anchor.dataset.value = "year";
+    add_anchor.textContent = " 1997"
+    add_anchor.href = "#"
+
+    add_div_content.appendChild(add_anchor);
+
+    add_anchor2.dataset.value = "longDate"
+    add_anchor2.textContent = " Sunday, December 21, 1997"
+    add_anchor2.href = "#"
+
+    add_div_content.appendChild(add_anchor2);
 
     dropdown_div.appendChild(add_div_content);
 }
