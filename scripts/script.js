@@ -205,7 +205,8 @@ function toggle_date(fieldname){
     const field_obj = myApp.field_objects[fieldname];
 
     if (field_obj.format !== null && field_obj.format.hasOwnProperty("dateFormat")){
-        field_obj.format["dateFormat"] = !field_obj.format["dateFormat"];
+        //This part of the toggle need to be in the list of dates to turn it off completely and not here
+        //field_obj.format["dateFormat"] = !field_obj.format["dateFormat"];
         date_dropdown(fieldname);
     }
 }
@@ -228,24 +229,43 @@ function add_anchor_tags(id, date_arr){
     parent.appendChild(fragment);
 }
 
+function find_attribute_value(collection, attr_value){
+    for (let i = 0; i < collection.length; i++){
+        if (collection[i].dataset.value === attr_value){
+            return i
+        }
+    }
+    return -1
+}
+
 
 function date_dropdown(fieldname){
-    // this needs to be a toggle
     const elem_id = document.getElementById("div_" + fieldname);
     let toggle_div = elem_id.getElementsByClassName("toggle_div")[0];
     // [3] is the date element however should have a better way to id this elem
     let dropdown_div = toggle_div.getElementsByClassName("dropdown")[3];
+    let drop_content = dropdown_div.getElementsByClassName("dropdown-content")[0];
+    const field_obj = myApp.field_objects[fieldname];
+    
+    // Only created once per element
+    if (drop_content === undefined){
+        const add_div_content= document.createElement("div");
+        add_div_content.className = "dropdown-content";
+        add_div_content.id = "date_drop";
+        dropdown_div.appendChild(add_div_content);
+    
+        let date_arr = dateArray();
+        add_anchor_tags("date_drop", date_arr);
+        // Reset it
+        drop_content = dropdown_div.getElementsByClassName("dropdown-content")[0];
+    }
 
+    let anchors = drop_content.getElementsByTagName("a");
 
-    const add_div_content= document.createElement("div");
-    add_div_content.className = "dropdown-content";
-    add_div_content.id = "date_drop";
-    dropdown_div.appendChild(add_div_content);
+    let date_type = field_obj.format["dateFormat"];
+    let index = find_attribute_value(anchors, date_type);
 
-    let date_arr = dateArray();
-
-    add_anchor_tags("date_drop", date_arr);
-
+    anchors[index].id = "date_selected";
 }
 
 function set_n_style_decim(fieldname){
@@ -270,6 +290,8 @@ function style_decim(fieldname){
 
 
 function style_date(fieldname){
+
+    
     const field_obj = myApp.field_objects[fieldname];
     const elem_id = document.getElementById("date_" + fieldname);
     const date = ["shortDate", "shortDateLE", "longMonthDayYear", "dayShortMonthYear",
@@ -495,24 +517,6 @@ function filter_prop_bool(btn, args){
           "hidden" : "aligner-div";
     })
 }
-
-
-
-// function set_hidden(fieldname){
-//     const field_obj = myApp.field_objects[fieldname];
-//     field_obj["visible"] = !field_obj["visible"];
-//     style_visible(fieldname);
-// }
-
-
-// function style_visible(id){
-//     const elem_id = document.getElementById(id);
-//     const field_obj = myApp.field_objects[id];
-
-//     elem_id.className = field_obj["visible"] === false ? "aligner-btn off" : "aligner-btn on";
-//     elem_id.innerHTML = field_obj["visible"] === false ? "Off" : "On";
-// }
-
 
 
 function only_selectable(btn){
