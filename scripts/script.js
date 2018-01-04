@@ -70,6 +70,25 @@ function other(){
 //     }
 // }
 
+function dateArray(){
+    return [
+        ["year", "1997", "#"],
+        ["shortMonthYear",	"Dec 1997", "#"],
+        ["longMonthYear",	"December 1997", "#"],
+        ["shortDate", "12/21/1997", "#"],
+        ["shortDateLE", "21/12/1997", "#"],
+        ["dayShortMonthYear", "21 Dec 1997", "#"],
+        ["longMonthDayYear", "December 21,1997", "#"],
+        ["longDate",	"Sunday, December 21, 1997", "#"],
+        ["shortDateShortTime",	"12/21/1997 6:00 PM", "#"],
+        ["shortDateLEShortTime",	"21/12/1997 6:00 PM", "#"],
+        ["shortDateLongTime", "12/21/1997 6:00:00 PM", "#"],
+        ["shortDateLELongTime",	"21/12/1997 6:00:00 PM", "#"],
+        ["shortDateShortTime24",	"12/21/1997 18:00", "#"],
+        ["shortDateLEShortTime24",	"21/12/1997 18:00", "#"],
+    ]
+}
+
 
 function get_unique_field_objs(json_data) {
 
@@ -189,12 +208,28 @@ function toggle_date(fieldname){
         field_obj.format["dateFormat"] = !field_obj.format["dateFormat"];
         date_dropdown(fieldname);
     }
+}
 
+
+function add_anchor_tags(id, date_arr){
+    let parent  = document.getElementById(id);
+    let fragment = document.createDocumentFragment();
+    
+    date_arr.forEach(data => {
+        let a = document.createElement("a");
+        a.textContent = data[1]; // text
+        a.dataset.value = data[0]; // value;
+        a.href = data[2]; // link
+        a.title = data[0] // tooltip
+
+        fragment.appendChild(a);
+    });
+
+    parent.appendChild(fragment);
 }
 
 
 function date_dropdown(fieldname){
-
     // this needs to be a toggle
     const elem_id = document.getElementById("div_" + fieldname);
     let toggle_div = elem_id.getElementsByClassName("toggle_div")[0];
@@ -203,25 +238,14 @@ function date_dropdown(fieldname){
 
 
     const add_div_content= document.createElement("div");
-
-    const add_anchor= document.createElement("a");
-    const add_anchor2= document.createElement("a");
-
-    add_div_content.className = "dropdown-content"
-
-    add_anchor.dataset.value = "year";
-    add_anchor.textContent = " 1997"
-    add_anchor.href = "#"
-
-    add_div_content.appendChild(add_anchor);
-
-    add_anchor2.dataset.value = "longDate"
-    add_anchor2.textContent = " Sunday, December 21, 1997"
-    add_anchor2.href = "#"
-
-    add_div_content.appendChild(add_anchor2);
-
+    add_div_content.className = "dropdown-content";
+    add_div_content.id = "date_drop";
     dropdown_div.appendChild(add_div_content);
+
+    let date_arr = dateArray();
+
+    add_anchor_tags("date_drop", date_arr);
+
 }
 
 function set_n_style_decim(fieldname){

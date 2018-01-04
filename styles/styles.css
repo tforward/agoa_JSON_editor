@@ -104,15 +104,14 @@
   left: 20px;
   top: -20px;
   cursor: pointer;
-  float: left;
-  width: 8em;
+  width: 12em;
 }
 
 .dropdown-content a {
     color: black;
+    display: block;
     padding: 1px 1px;
     text-decoration: none;
-    width: 1em;
 }
 
 .dropdown-content a:hover {background-color: #f1f1f1}
