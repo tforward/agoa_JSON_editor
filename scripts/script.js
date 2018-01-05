@@ -72,20 +72,20 @@ function other(){
 
 function dateArray(){
     return [
-        ["year", "1997", "#"],
-        ["shortMonthYear",	"Dec 1997", "#"],
-        ["longMonthYear",	"December 1997", "#"],
-        ["shortDate", "12/21/1997", "#"],
-        ["shortDateLE", "21/12/1997", "#"],
-        ["dayShortMonthYear", "21 Dec 1997", "#"],
-        ["longMonthDayYear", "December 21,1997", "#"],
-        ["longDate",	"Sunday, December 21, 1997", "#"],
-        ["shortDateShortTime",	"12/21/1997 6:00 PM", "#"],
-        ["shortDateLEShortTime",	"21/12/1997 6:00 PM", "#"],
-        ["shortDateLongTime", "12/21/1997 6:00:00 PM", "#"],
-        ["shortDateLELongTime",	"21/12/1997 6:00:00 PM", "#"],
-        ["shortDateShortTime24",	"12/21/1997 18:00", "#"],
-        ["shortDateLEShortTime24",	"21/12/1997 18:00", "#"],
+        ["year", "1997"],
+        ["shortMonthYear",	"Dec 1997"],
+        ["longMonthYear",	"December 1997"],
+        ["shortDate", "12/21/1997"],
+        ["shortDateLE", "21/12/1997"],
+        ["dayShortMonthYear", "21 Dec 1997"],
+        ["longMonthDayYear", "December 21,1997"],
+        ["longDate",	"Sunday, December 21, 1997"],
+        ["shortDateShortTime",	"12/21/1997 6:00 PM"],
+        ["shortDateLEShortTime",	"21/12/1997 6:00 PM"],
+        ["shortDateLongTime", "12/21/1997 6:00:00 PM"],
+        ["shortDateLELongTime",	"21/12/1997 6:00:00 PM"],
+        ["shortDateShortTime24",	"12/21/1997 18:00"],
+        ["shortDateLEShortTime24",	"21/12/1997 18:00"]
     ]
 }
 
@@ -162,16 +162,6 @@ function add_toggle_img(fieldname, add_to, prefix, func){
     btn_toggle(add_tog.id, func);
 }
 
-function add_dropdown(){
-    const add_div_content= document.createElement("div");
-
-
-
-    //add_div_dropdown.appendChild(add_span);
-
-    //add_div_content.className = "dropdown-content"
-    //add_div_content.innerText = "test";
-}
 
 function set_n_style_visibility(fieldname){
     // Remove the "vis_" from fieldname
@@ -180,12 +170,14 @@ function set_n_style_visibility(fieldname){
     style_visibility(f_id);
 }
 
+
 function set_n_style_label(fieldname){
     // Remove the "label_" from fieldname
     const d_id = fieldname.id.split(/_(.+)/)[1]
     toggle_label(d_id);
     style_label(d_id);
 }
+
 
 function set_n_style_digit_sep(fieldname){
     // Remove the "digit_" from fieldname
@@ -194,6 +186,7 @@ function set_n_style_digit_sep(fieldname){
     style_digit_sep(d_id);
 }
 
+
 function set_n_style_date(fieldname){
     // Remove the "date_" from fieldname
     const d_id = fieldname.id.split(/_(.+)/)[1]
@@ -201,28 +194,37 @@ function set_n_style_date(fieldname){
     style_date(d_id);
 }
 
+
 function toggle_date(fieldname){
     const field_obj = myApp.field_objects[fieldname];
 
     if (field_obj.format !== null && field_obj.format.hasOwnProperty("dateFormat")){
         //This part of the toggle need to be in the list of dates to turn it off completely and not here
         //field_obj.format["dateFormat"] = !field_obj.format["dateFormat"];
+        
         date_dropdown(fieldname);
     }
 }
 
+function set_date_type(type, fieldname, a){
+    const current_select = document.getElementById("date_selected");
+    current_select.id = null;
+    myApp.field_objects[fieldname].format.dateFormat = type;
+    a.id = "date_selected"
+}
 
-function add_anchor_tags(id, date_arr){
-    let parent  = document.getElementById(id);
+
+function add_anchor_tags(parent, date_arr, fieldname){
     let fragment = document.createDocumentFragment();
     
     date_arr.forEach(data => {
         let a = document.createElement("a");
         a.textContent = data[1]; // text
         a.dataset.value = data[0]; // value;
-        a.href = data[2]; // link
+        a.href = "javascript:;" // link
         a.title = data[0] // tooltip
 
+        a.addEventListener("click", set_date_type.bind(null, data[0], fieldname, a));
         fragment.appendChild(a);
     });
 
@@ -235,11 +237,16 @@ function find_attribute_value(collection, attr_value){
             return i
         }
     }
+    // Nothing Found
     return -1
 }
 
 
 function date_dropdown(fieldname){
+    // TODO There's an issue with the date selected
+    // I need to reset / fix for the style gets clear as it's messing up between div's
+    // a  class may work but will have to test
+
     const elem_id = document.getElementById("div_" + fieldname);
     let toggle_div = elem_id.getElementsByClassName("toggle_div")[0];
     // [3] is the date element however should have a better way to id this elem
@@ -247,15 +254,14 @@ function date_dropdown(fieldname){
     let drop_content = dropdown_div.getElementsByClassName("dropdown-content")[0];
     const field_obj = myApp.field_objects[fieldname];
     
-    // Only created once per element
+    // Only created once per element, if clicked
     if (drop_content === undefined){
         const add_div_content= document.createElement("div");
         add_div_content.className = "dropdown-content";
-        add_div_content.id = "date_drop";
         dropdown_div.appendChild(add_div_content);
     
         let date_arr = dateArray();
-        add_anchor_tags("date_drop", date_arr);
+        add_anchor_tags(add_div_content, date_arr, fieldname);
         // Reset it
         drop_content = dropdown_div.getElementsByClassName("dropdown-content")[0];
     }
@@ -263,9 +269,15 @@ function date_dropdown(fieldname){
     let anchors = drop_content.getElementsByTagName("a");
 
     let date_type = field_obj.format["dateFormat"];
+
     let index = find_attribute_value(anchors, date_type);
 
     anchors[index].id = "date_selected";
+
+    let toggle = toggle_div.dataset.toggle ^= 1
+
+    drop_content.style.display = toggle === 1 ? "block" : "none"
+
 }
 
 function set_n_style_decim(fieldname){
