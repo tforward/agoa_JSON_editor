@@ -243,16 +243,19 @@ function find_attribute_value(collection, attr_value){
 
 
 function date_dropdown(fieldname){
-    // TODO There's an issue with the date selected
-    // I need to reset / fix for the style gets clear as it's messing up between div's
-    // a  class may work but will have to test
-
     const elem_id = document.getElementById("div_" + fieldname);
     let toggle_div = elem_id.getElementsByClassName("toggle_div")[0];
     // [3] is the date element however should have a better way to id this elem
     let dropdown_div = toggle_div.getElementsByClassName("dropdown")[3];
     let drop_content = dropdown_div.getElementsByClassName("dropdown-content")[0];
     const field_obj = myApp.field_objects[fieldname];
+
+    const current_select = document.getElementById("date_selected");
+
+    // Removes the CSS if element already exists
+    if (current_select){
+        current_select.id = null;
+    }
     
     // Only created once per element, if clicked
     if (drop_content === undefined){
@@ -274,10 +277,9 @@ function date_dropdown(fieldname){
 
     anchors[index].id = "date_selected";
 
-    let toggle = toggle_div.dataset.toggle ^= 1
+    let toggle = toggle_div.dataset.toggle ^= 1;
 
-    drop_content.style.display = toggle === 1 ? "block" : "none"
-
+    drop_content.style.display = toggle === 1 ? "block" : "none";
 }
 
 function set_n_style_decim(fieldname){
