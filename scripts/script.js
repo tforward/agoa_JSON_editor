@@ -211,6 +211,16 @@ function set_date_type(type, fieldname, a){
     current_select.id = null;
     myApp.field_objects[fieldname].format.dateFormat = type;
     a.id = "date_selected"
+    // set here to fade te window to close once
+
+    const elem_id = document.getElementById("div_" + fieldname);
+    let toggle_div = elem_id.getElementsByClassName("toggle_div")[0];
+    // [3] is the date element however should have a better way to id this elem
+    let dropdown_div = toggle_div.getElementsByClassName("dropdown")[3];
+    let drop_content = dropdown_div.getElementsByClassName("dropdown-content")[0];
+
+    drop_content.style.display = "none";
+    toggle_div.dataset.toggle = 0;
 }
 
 
@@ -243,6 +253,8 @@ function find_attribute_value(collection, attr_value){
 
 
 function date_dropdown(fieldname){
+    // TODO: There's a bug where if you have an open dropdown and then select a new one the 
+    // toggle status gets messed up.
     const elem_id = document.getElementById("div_" + fieldname);
     let toggle_div = elem_id.getElementsByClassName("toggle_div")[0];
     // [3] is the date element however should have a better way to id this elem
@@ -252,11 +264,6 @@ function date_dropdown(fieldname){
 
     const current_select = document.getElementById("date_selected");
 
-    // Removes the CSS if element already exists
-    if (current_select){
-        current_select.id = null;
-    }
-    
     // Only created once per element, if clicked
     if (drop_content === undefined){
         const add_div_content= document.createElement("div");
@@ -267,15 +274,14 @@ function date_dropdown(fieldname){
         add_anchor_tags(add_div_content, date_arr, fieldname);
         // Reset it
         drop_content = dropdown_div.getElementsByClassName("dropdown-content")[0];
+        toggle_div.dataset.toggle = 0;
+
+        // Sets the CSS to the initial value
+        let anchors = drop_content.getElementsByTagName("a");
+        let date_type = field_obj.format["dateFormat"];
+        let index = find_attribute_value(anchors, date_type);
+        anchors[index].id = "date_selected";
     }
-
-    let anchors = drop_content.getElementsByTagName("a");
-
-    let date_type = field_obj.format["dateFormat"];
-
-    let index = find_attribute_value(anchors, date_type);
-
-    anchors[index].id = "date_selected";
 
     let toggle = toggle_div.dataset.toggle ^= 1;
 
