@@ -207,20 +207,26 @@ function toggle_date(fieldname){
 }
 
 function set_date_type(type, fieldname, a){
-    const current_select = document.getElementById("date_selected");
-    current_select.id = null;
-    myApp.field_objects[fieldname].format.dateFormat = type;
-    a.id = "date_selected"
-    // set here to fade te window to close once
-
     const elem_id = document.getElementById("div_" + fieldname);
     let toggle_div = elem_id.getElementsByClassName("toggle_div")[0];
     // [3] is the date element however should have a better way to id this elem
     let dropdown_div = toggle_div.getElementsByClassName("dropdown")[3];
     let drop_content = dropdown_div.getElementsByClassName("dropdown-content")[0];
+    const field_obj = myApp.field_objects[fieldname];
+
+    // Resets the anchors
+    let anchors = drop_content.getElementsByTagName("a");
+    let date_type = field_obj.format["dateFormat"];
+    let index = find_attribute_value(anchors, date_type);
+    anchors[index].id = "none";
+
+    myApp.field_objects[fieldname].format.dateFormat = type;
+    // set here to fade the window to close once
+    a.id = "date_selected"
 
     drop_content.style.display = "none";
     toggle_div.dataset.toggle = 0;
+    style_date(fieldname);
 }
 
 
@@ -253,16 +259,12 @@ function find_attribute_value(collection, attr_value){
 
 
 function date_dropdown(fieldname){
-    // TODO: There's a bug where if you have an open dropdown and then select a new one the 
-    // toggle status gets messed up.
     const elem_id = document.getElementById("div_" + fieldname);
     let toggle_div = elem_id.getElementsByClassName("toggle_div")[0];
     // [3] is the date element however should have a better way to id this elem
     let dropdown_div = toggle_div.getElementsByClassName("dropdown")[3];
     let drop_content = dropdown_div.getElementsByClassName("dropdown-content")[0];
     const field_obj = myApp.field_objects[fieldname];
-
-    const current_select = document.getElementById("date_selected");
 
     // Only created once per element, if clicked
     if (drop_content === undefined){
@@ -275,8 +277,7 @@ function date_dropdown(fieldname){
         // Reset it
         drop_content = dropdown_div.getElementsByClassName("dropdown-content")[0];
         toggle_div.dataset.toggle = 0;
-
-        // Sets the CSS to the initial value
+        // Set the initial value
         let anchors = drop_content.getElementsByTagName("a");
         let date_type = field_obj.format["dateFormat"];
         let index = find_attribute_value(anchors, date_type);
@@ -284,7 +285,6 @@ function date_dropdown(fieldname){
     }
 
     let toggle = toggle_div.dataset.toggle ^= 1;
-
     drop_content.style.display = toggle === 1 ? "block" : "none";
 }
 
@@ -310,8 +310,6 @@ function style_decim(fieldname){
 
 
 function style_date(fieldname){
-
-    
     const field_obj = myApp.field_objects[fieldname];
     const elem_id = document.getElementById("date_" + fieldname);
     const date = ["shortDate", "shortDateLE", "longMonthDayYear", "dayShortMonthYear",
