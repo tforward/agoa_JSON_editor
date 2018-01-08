@@ -23,18 +23,10 @@ function other(){
     // This tool assumes all fields based on the name
 
 	// (key === "label") format to make this look nice remove _ etc.
-	
-    // label rules TitleCase, UpperCase, CamalCase, remove() or user_input
-    
-    // tooltip
-    
-    // date formats https://developers.arcgis.com/javascript/3/jshelp/intro_popuptemplate.html
 
     // save / load configururation
 
     // output
-
-    // tooltip for app
 
     // formatting and make nice
 
@@ -43,6 +35,10 @@ function other(){
     // places (decimals)
 
     //modal 
+
+    // some work on the bulk editors 
+
+    // there is alot more I could do but I feel this would be good for first release as it would be enough to be working...
 
     //https://codepen.io/bchalker/pen/pyvBmq
 
