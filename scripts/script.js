@@ -17,7 +17,8 @@ function parse_json(data){
 function other(){
 
     // TODO
-    //    - 
+    //    - Refactoring in general (Need to do a site overhaul)
+
     
     // This tool assumes all fields based on the name
 
@@ -224,7 +225,7 @@ function set_date_type(type, fieldname, a){
     // set here to fade the window to close once
     a.id = "date_selected"
 
-    drop_content.style.display = "none";
+    drop_content.className = "dropdown-content hide";
     toggle_div.dataset.toggle = 0;
     style_date(fieldname);
 }
@@ -276,7 +277,6 @@ function date_dropdown(fieldname){
         add_anchor_tags(add_div_content, date_arr, fieldname);
         // Reset it
         drop_content = dropdown_div.getElementsByClassName("dropdown-content")[0];
-        toggle_div.dataset.toggle = 0;
         // Set the initial value
         let anchors = drop_content.getElementsByTagName("a");
         let date_type = field_obj.format["dateFormat"];
@@ -285,16 +285,32 @@ function date_dropdown(fieldname){
     }
 
     let toggle = toggle_div.dataset.toggle ^= 1;
-    drop_content.style.display = toggle === 1 ? "block" : "none";
+    drop_content.className = toggle === 1 ? "dropdown-content" : "dropdown-content hide";
 }
 
 function set_n_style_decim(fieldname){
-    style_decim(fieldname);
+    const d_id = fieldname.id.split(/_(.+)/)[1]
+    const elem_id = document.getElementById("div_" + d_id);
+    let toggle_div = elem_id.getElementsByClassName("toggle_div")[0];
+    // [3] is the date element however should have a better way to id this elem
+    let dropdown_div = toggle_div.getElementsByClassName("dropdown")[4];
+
+    const add_div_content= document.createElement("div");
+    add_div_content.className = "digitdropdown";
+    dropdown_div.appendChild(add_div_content);
+
+    const add_p = document.createElement("p");
+    add_p.innerText = "test";
+
+    add_div_content.appendChild(add_p);
+    console.log(dropdown_div)
 }
 
 function style_decim(fieldname){
     const field_obj = myApp.field_objects[fieldname];
     const elem_id = document.getElementById("decim_" + fieldname);
+
+    //console.log(field_obj.format)
 
     if (field_obj.format !== null && field_obj.format.hasOwnProperty("places")){
         const decimals = field_obj.format["places"];

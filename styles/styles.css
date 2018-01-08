@@ -80,10 +80,6 @@
 	border-style: inset;
 }
 
-.hidden{
-	display: none;
-}
-
 .notApplicable{
   opacity: 0.6;
 }
@@ -93,8 +89,13 @@
   display: inline-block;
 }
 
+.digitdropdown {
+  position: absolute;
+  display: inline-block;
+  min-width: 12em;
+}
+
 .dropdown-content {
-  background-Color: Red;
   display: block;
   position: absolute;
   background-color: #f9f9f9;
@@ -104,7 +105,9 @@
   left: 20px;
   top: -20px;
   cursor: pointer;
-  width: 12em;
+  min-width: 12em;
+  transition: 1.3s ease-out;
+  opacity: 1;
 }
 
 .dropdown-content a {
@@ -119,3 +122,12 @@
 .dropdown-content a:active {background-color: #f1f1f1}
 
 #date_selected {background-color: lightblue}
+
+/* Keep these rules at bottom of CSS */
+.hidden{
+	display: none;
+}
+
+.hide{
+  opacity: 0;
+}
